@@ -115,7 +115,6 @@
 			this.$store.commit("clearViewTags")
 			this.$store.commit("clearKeepLive")
 			this.$store.commit("clearIframeList")
-			console.log('%c SCUI %c Gitee: https://gitee.com/lolicode/scui', 'background:#666;color:#fff;border-radius:3px;', '')
 		},
 		methods: {
 			configDark(){
@@ -152,12 +151,12 @@
 
 	.login_main {flex: 1;overflow: auto;display:flex;}
 	.login-form {width: 400px;margin: auto;padding:20px 0;}
-	.login-header {margin-bottom: 40px;}
+	.login-header {margin-bottom: 50px;}
 	.login-header .logo {display: flex;align-items: center;}
-	.login-header .logo img {width: 40px;height: 40px;vertical-align: bottom;margin-right: 10px;}
+	.login-header .logo img {width: 50px;height: 50px;vertical-align: bottom;margin-right: 10px;}
 	.login-header .logo label {font-size: 26px;font-weight: bold;}
 	.login-oauth {display: flex;justify-content:space-around;}
-	.login-form .el-divider {margin-top:40px;}
+	.login-form .el-divider {margin-top:50px;}
 
 	.login-form {}
 	.login-form:deep(.el-tabs) .el-tabs__header {margin-bottom: 25px;}

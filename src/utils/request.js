@@ -33,50 +33,61 @@ let MessageBox_401_show = false
 // HTTP response 拦截器
 axios.interceptors.response.use(
 	(response) => {
-		return response;
-	},
-	(error) => {
-		if (error.response) {
-			if (error.response.code == 404) {
-				ElNotification.error({
-					title: '请求错误',
-					message: "Status:404，正在请求不存在的服务器记录！"
-				});
-			} else if (error.response.code == 500) {
-				ElNotification.error({
-					title: '请求错误',
-					message: error.response.data.message || "Status:500，服务器发生错误！"
-				});
-			} else if (error.response.code == 401) {
-				if(!MessageBox_401_show){
-					MessageBox_401_show = true
-					ElMessageBox.confirm('当前用户已被登出或无权限访问当前资源，请尝试重新登录后再操作。', '无权限访问', {
-						type: 'error',
-						closeOnClickModal: false,
-						center: true,
-						confirmButtonText: '重新登录',
-						beforeClose: (action, instance, done) => {
-							MessageBox_401_show = false
-							done()
-						}
-					}).then(() => {
-						router.replace({path: '/login'});
-					}).catch(() => {})
-				}
-			} else {
-				ElNotification.error({
-					title: '请求错误',
-					message: error.message || `Status:${error.response.code}，未知错误！`
-				});
+		const responseData = response.data;
+
+		if(responseData.code === 200){
+			return response;
+		}
+
+		if (responseData.code === 404) {
+			ElNotification.error({
+				title: '请求错误',
+				message: `Status:404，正在请求不存在的服务器记录！`
+			});
+		} else if (responseData.code === 500) {
+			ElNotification.error({
+				title: '请求错误',
+				message: responseData.message || 'Status:500，服务器发生错误！'
+			});
+		} else if (responseData.code === 401) {
+			if (!MessageBox_401_show) {
+				MessageBox_401_show = true;
+				ElMessageBox.confirm('当前用户已被登出或无权限访问当前资源，请尝试重新登录后再操作。', '无权限访问', {
+					type: 'error',
+					closeOnClickModal: false,
+					center: true,
+					confirmButtonText: '重新登录',
+					beforeClose: (action, instance, done) => {
+						MessageBox_401_show = false;
+						done();
+					}
+				}).then(() => {
+					router.replace({ path: '/login' });
+				}).catch(() => {});
 			}
 		} else {
 			ElNotification.error({
 				title: '请求错误',
-				message: "请求服务器无响应！"
+				message: responseData.message || `Status:${response.status}，未知错误！`
 			});
 		}
 
-		return Promise.reject(error.response);
+		return response;
+	},
+	(error) => {
+		if (error.response) {
+			ElNotification.error({
+				title: '请求错误',
+				message: '请求服务器无响应！'
+			});
+		} else {
+			ElNotification.error({
+				title: '请求错误',
+				message: '请求发送失败！'
+			});
+		}
+
+		return Promise.reject(error);
 	}
 );
 

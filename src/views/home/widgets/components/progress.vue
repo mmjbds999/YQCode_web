@@ -1,13 +1,8 @@
 <template>
-	<el-card shadow="hover" header="进度环">
-		<div class="progress">
-			<el-progress type="dashboard" :percentage="85.5" :width="160">
-				<template #default="{ percentage }">
-				    <div class="percentage-value">{{ percentage }}%</div>
-				    <div class="percentage-label">当前进度</div>
-				  </template>
-			</el-progress>
-		</div>
+	<el-card shadow="hover" header="版权" class="item-background">
+		<p>
+			版权所有 (c) 2024 <a href="https://github.com/mmjbds999" style="color: #53a7ff">[mmjbds999]</a>。保留所有权利。
+		</p>
 
 	</el-card>
 </template>
@@ -29,4 +24,5 @@
 	.progress {text-align: center;}
 	.progress .percentage-value {font-size: 28px;}
 	.progress .percentage-label {font-size: 12px;margin-top: 10px;}
+	.item-background p {color: #999;margin-top:10px;line-height: 1.8;}
 </style>

@@ -3,7 +3,7 @@
 		<div class="welcome">
 			<div class="logo">
 				<img src="img/logo.png">
-				<h2>欢迎体验 SCUI</h2>
+				<h2>欢迎体验 YQCode</h2>
 			</div>
 			<div class="tips">
 				<div class="tips-item">
@@ -12,16 +12,16 @@
 				</div>
 				<div class="tips-item">
 					<div class="tips-item-icon"><el-icon><el-icon-promotion/></el-icon></div>
-					<div class="tips-item-message">在提高前端算力、减少带宽请求和代码执行力上多次优化，并且持续着。</div>
+					<div class="tips-item-message">项目基于Mysql+SpringBoot+Vue3（SCUI）。</div>
 				</div>
 				<div class="tips-item">
 					<div class="tips-item-icon"><el-icon><el-icon-milk-tea/></el-icon></div>
-					<div class="tips-item-message">项目目的：让前端工作更快乐</div>
+					<div class="tips-item-message">目前项目实现了快速的中后台系统0代码、低代码开发，后期预计会持续加入客户端的低代码开发!</div>
 				</div>
 			</div>
-			<div class="actions">
-				<el-button type="primary" icon="el-icon-check" size="large" @click="godoc">文档</el-button>
-			</div>
+<!--			<div class="actions">-->
+<!--				<el-button type="primary" icon="el-icon-check" size="large" @click="godoc">文档</el-button>-->
+<!--			</div>-->
 		</div>
 	</el-card>
 </template>
@@ -38,7 +38,7 @@
 		},
 		methods: {
 			godoc(){
-				window.open("https://lolicode.gitee.io/scui-doc/")
+				window.open("https://github.com/mmjbds999/YQCode")
 			}
 		}
 	}
