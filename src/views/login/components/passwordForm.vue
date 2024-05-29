@@ -5,7 +5,7 @@
 <!--				<template #append>-->
 <!--					<el-select v-model="userType" style="width: 130px;">-->
 <!--						<el-option label="用户" value="user"></el-option>-->
-<!--						<el-option label="管理员" value="admin"></el-option>-->
+<!--						<el-option label="超级管理员" value="admin"></el-option>-->
 <!--					</el-select>-->
 <!--				</template>-->
 			</el-input>
@@ -52,15 +52,15 @@
 			}
 		},
 		watch:{
-			userType(val){
-				if(val === 'admin'){
-					this.form.user = 'admin'
-					this.form.password = 'yqcode@123'
-				}else if(val === 'user'){
-					this.form.user = 'test'
-					this.form.password = 'yqcode@test'
-				}
-			}
+			// userType(val){
+			// 	if(val === 'admin'){
+			// 		this.form.user = 'admin'
+			// 		this.form.password = 'yqcode@123'
+			// 	}else if(val === 'user'){
+			// 		this.form.user = 'test'
+			// 		this.form.password = 'yqcode@test'
+			// 	}
+			// }
 		},
 		mounted() {
 
@@ -83,6 +83,7 @@
 						expires: this.form.autologin? 24*60*60 : 0
 					})
 					this.$TOOL.data.set("USER_INFO", user.data.userInfo)
+					this.$store.dispatch('setUserInfo', user.data.userInfo);
 				}else{
 					this.isLogin = false
 					this.$message.warning(user.message)

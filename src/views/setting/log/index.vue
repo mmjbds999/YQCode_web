@@ -1,9 +1,9 @@
 <template>
 	<el-container>
-		<el-aside width="220px">
-			<el-tree ref="category" class="menu" node-key="label" :data="category" :default-expanded-keys="['系统日志']" current-node-key="系统日志" :highlight-current="true" :expand-on-click-node="false">
-			</el-tree>
-		</el-aside>
+<!--		<el-aside width="220px">-->
+<!--			<el-tree ref="category" class="menu" node-key="label" :data="category" :default-expanded-keys="['系统日志']" current-node-key="系统日志" :highlight-current="true" :expand-on-click-node="false">-->
+<!--			</el-tree>-->
+<!--		</el-aside>-->
 		<el-container>
 			<el-main class="nopadding">
 				<el-container>
@@ -15,25 +15,22 @@
 
 						</div>
 					</el-header>
-					<el-header style="height:150px;">
-						<scEcharts height="100%" :option="logsChartOption"></scEcharts>
-					</el-header>
 					<el-main class="nopadding">
-						<scTable ref="table" :apiObj="apiObj" stripe highlightCurrentRow @row-click="rowClick">
-							<el-table-column label="级别" prop="level" width="60">
-								<template #default="scope">
-									<el-icon v-if="scope.row.level=='error'" style="color: #F56C6C;"><el-icon-circle-close-filled /></el-icon>
-									<el-icon v-if="scope.row.level=='warn'" style="color: #E6A23C;"><el-icon-warning-filled /></el-icon>
-									<el-icon v-if="scope.row.level=='info'" style="color: #409EFF;"><el-icon-info-filled /></el-icon>
-								</template>
-							</el-table-column>
+						<scTable ref="table" :apiObj="apiObj" stripe highlightCurrentRow >
+<!--							<el-table-column label="级别" prop="level" width="60">-->
+<!--								<template #default="scope">-->
+<!--									<el-icon v-if="scope.row.level=='error'" style="color: #F56C6C;"><el-icon-circle-close-filled /></el-icon>-->
+<!--									<el-icon v-if="scope.row.level=='warn'" style="color: #E6A23C;"><el-icon-warning-filled /></el-icon>-->
+<!--									<el-icon v-if="scope.row.level=='info'" style="color: #409EFF;"><el-icon-info-filled /></el-icon>-->
+<!--								</template>-->
+<!--							</el-table-column>-->
 							<el-table-column label="ID" prop="id" width="180"></el-table-column>
-							<el-table-column label="日志名" prop="name" width="150"></el-table-column>
-							<el-table-column label="请求接口" prop="url" width="150"></el-table-column>
-							<el-table-column label="请求方法" prop="type" width="150"></el-table-column>
-							<el-table-column label="用户" prop="user" width="150"></el-table-column>
-							<el-table-column label="客户端IP" prop="cip" width="150"></el-table-column>
-							<el-table-column label="日志时间" prop="time" width="170"></el-table-column>
+							<el-table-column label="业务名称" prop="title" min-width="240"></el-table-column>
+							<el-table-column label="IP" prop="ip" width="150"></el-table-column>
+							<el-table-column label="操作结果" prop="code" width="150"></el-table-column>
+							<el-table-column label="执行时间" prop="exeTime" width="150"></el-table-column>
+							<el-table-column label="操作用户" prop="user.name" width="150"></el-table-column>
+							<el-table-column label="日志时间" prop="createTime" width="170"></el-table-column>
 						</scTable>
 					</el-main>
 				</el-container>
@@ -41,9 +38,9 @@
 		</el-container>
 	</el-container>
 
-	<el-drawer v-model="infoDrawer" title="日志详情" :size="600" destroy-on-close>
-		<info ref="info"></info>
-	</el-drawer>
+<!--	<el-drawer v-model="infoDrawer" title="日志详情" :size="600" destroy-on-close>-->
+<!--		<info ref="info"></info>-->
+<!--	</el-drawer>-->
 </template>
 
 <script>

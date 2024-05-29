@@ -9,6 +9,13 @@ export default {
 			return await http.post(this.url, data, config);
 		}
 	},
+	delFile: {
+		url: `${config.API_URL}/file/del`,
+		name: "删除上传文件",
+		delete: async function(data, config={}){
+			return await http.delete(this.url, data, config);
+		}
+	},
 	uploadFile: {
 		url: `${config.API_URL}/uploadFile`,
 		name: "附件上传",

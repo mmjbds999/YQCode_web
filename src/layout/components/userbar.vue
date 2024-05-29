@@ -47,7 +47,7 @@
 		</div>
 		<el-dropdown class="user panel-item" trigger="click" @command="handleUser">
 			<div class="user-avatar">
-				<el-avatar :size="30">{{ userNameF }}</el-avatar>
+				<el-avatar :size="30" :src="userLogo">{{ userNameF }}</el-avatar>
 				<label>{{ userName }}</label>
 				<el-icon class="el-icon--right"><el-icon-arrow-down /></el-icon>
 			</div>
@@ -74,6 +74,7 @@
 <script>
 	import search from './search.vue'
 	import tasks from './tasks.vue'
+	import {mapGetters} from "vuex";
 
 	export default {
 		components: {
@@ -84,6 +85,7 @@
 			return {
 				userName: "",
 				userNameF: "",
+				userLogo: "img/avatar.jpg",
 				searchVisible: false,
 				tasksVisible: false,
 				msg: false,
@@ -118,10 +120,22 @@
 				]
 			}
 		},
-		created() {
-			var userInfo = this.$TOOL.data.get("USER_INFO");
-			this.userName = userInfo.userName;
-			this.userNameF = this.userName.substring(0,1);
+		computed: {
+			...mapGetters(['userInfo'])
+		},
+		watch: {
+			userInfo: {
+				handler(userInfo) {
+					if (userInfo && userInfo.user) {
+						this.userName = userInfo.user.name;
+						this.userNameF = this.userName.substring(0,1);
+						if (userInfo.user.logo) {
+							this.userLogo = userInfo.user.logo;
+						}
+					}
+				},
+				immediate: true // 立即触发一次
+			}
 		},
 		methods: {
 			//个人信息

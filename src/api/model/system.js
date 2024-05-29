@@ -10,11 +10,22 @@ export default {
 				return await http.get(this.url);
 			}
 		},
-		list: {
-			url: `${config.API_URL}/system/menu/list`,
-			name: "获取菜单",
-			get: async function(){
-				return await http.get(this.url);
+		save: {
+			url: `${config.API_URL}/menu/save`,
+			name: "新增菜单",
+			post: async function(data){
+				return await http.post(this.url, data, {
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				});
+			}
+		},
+		del: {
+			url: `${config.API_URL}/menu/del`,
+			name: "删除菜单",
+			delete: async function(data){
+				return await http.delete(this.url, data);
 			}
 		}
 	},
@@ -66,6 +77,20 @@ export default {
 			get: async function(params){
 				return await http.get(this.url, params);
 			}
+		},
+		save: {
+			url: `${config.API_URL}/user/save`,
+			name: "保存用户",
+			post: async function(data){
+				return await http.post(this.url, data);
+			}
+		},
+		changePassword: {
+			url: `${config.API_URL}/auth/changePassword`,
+			name: "修改密码",
+			post: async function(data={}){
+				return await http.post(this.url, data);
+			}
 		}
 	},
 	app: {
@@ -79,7 +104,7 @@ export default {
 	},
 	log: {
 		list: {
-			url: `${config.API_URL}/system/log/list`,
+			url: `${config.API_URL}/log/userLog`,
 			name: "日志列表",
 			get: async function(params){
 				return await http.get(this.url, params);

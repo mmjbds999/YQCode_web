@@ -8,13 +8,13 @@
 			<el-form-item label="主题颜色">
 				<el-color-picker v-model="config.colorPrimary" :predefine="colorList">></el-color-picker>
 			</el-form-item>
-			<el-form-item :label="$t('user.language')">
-				<el-select v-model="config.lang">
-					<el-option label="简体中文" value="zh-cn"></el-option>
-					<el-option label="English" value="en"></el-option>
-				</el-select>
-				<div class="el-form-item-msg">{{ $t('user.language_msg') }}</div>
-			</el-form-item>
+<!--			<el-form-item :label="$t('user.language')">-->
+<!--				<el-select v-model="config.lang">-->
+<!--					<el-option label="简体中文" value="zh-cn"></el-option>-->
+<!--					<el-option label="English" value="en"></el-option>-->
+<!--				</el-select>-->
+<!--				<div class="el-form-item-msg">{{ $t('user.language_msg') }}</div>-->
+<!--			</el-form-item>-->
 		</el-form>
 	</el-card>
 	<el-card shadow="never" header="个人设置" style="margin-top:20px;">

@@ -1,13 +1,13 @@
 <template>
-	<el-card shadow="never" header="事务待办">
+	<el-card shadow="never" header="消息通知">
 		<el-form ref="form" label-width="180px" label-position="left" style="margin-top:20px;">
-			<el-form-item label="有新的待办">
-				<el-checkbox v-model="form.new">短信推送</el-checkbox>
-				<el-checkbox v-model="form.new_wx">微信推送</el-checkbox>
+			<el-form-item label="系统消息">
+				<el-checkbox v-model="form.system">系统推送</el-checkbox>
+				<el-checkbox v-model="form.new_wx">短信通知</el-checkbox>
 			</el-form-item>
-			<el-form-item label="待办有效时剩24小时">
-				<el-checkbox v-model="form.timeout">短信推送</el-checkbox>
-				<el-checkbox v-model="form.timeout_wx">微信推送</el-checkbox>
+			<el-form-item label="业务消息">
+				<el-checkbox v-model="form.business">系统推送</el-checkbox>
+				<el-checkbox v-model="form.timeout_wx">短信通知</el-checkbox>
 			</el-form-item>
 		</el-form>
 	</el-card>
@@ -18,8 +18,8 @@
 		data() {
 			return {
 				form: {
-					new: true,
-					timeout: true
+					system: true,
+					business: true
 				}
 			}
 		}

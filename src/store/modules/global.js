@@ -12,6 +12,8 @@ export default {
 		layoutTags: config.LAYOUT_TAGS,
 		//主题
 		theme: config.THEME,
+		//用户信息
+		userInfo: JSON.parse(localStorage.getItem('USER_INFO_USER')) || {}
 	},
 	mutations: {
 		SET_ismobile(state, key){
@@ -28,6 +30,18 @@ export default {
 		},
 		TOGGLE_layoutTags(state){
 			state.layoutTags = !state.layoutTags
+		},
+		SET_USER_INFO(state, userInfo) {
+			state.userInfo = userInfo;
 		}
+	},
+	actions: {
+		setUserInfo({ commit }, userInfo) {
+			commit('SET_USER_INFO', userInfo);
+			localStorage.setItem('USER_INFO_USER', JSON.stringify(userInfo));
+		}
+	},
+	getters: {
+		userInfo: state => state.userInfo
 	}
 }

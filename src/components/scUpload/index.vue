@@ -140,7 +140,9 @@
 				delete this.cropperFile.tempCropperFile
 			},
 			handleRemove(){
+				let url = this.file.url
 				this.clearFiles()
+				this.removeFile(url)
 			},
 			clearFiles(){
 				URL.revokeObjectURL(this.file.tempFile)
@@ -149,6 +151,9 @@
 				this.$nextTick(()=>{
 					this.$refs.uploader.clearFiles()
 				})
+			},
+			removeFile(url){
+				config.delObj.delete({'url': url})
 			},
 			change(file,files){
 				if(files.length > 1){
@@ -237,7 +242,7 @@
 					}
 				}).then(res => {
 					var response = config.parseData(res);
-					if(response.code == config.successCode){
+					if(response.code === config.successCode){
 						param.onSuccess(res)
 					}else{
 						param.onError(response.msg || "未知错误")

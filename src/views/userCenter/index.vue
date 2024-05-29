@@ -4,7 +4,7 @@
 			<el-container>
 				<el-header style="height: auto;display: block;">
 					<div class="user-info-top">
-						<el-avatar :size="70" src="img/avatar.jpg"></el-avatar>
+						<el-avatar :size="70" :src="user.logo"></el-avatar>
 						<h2>{{ user.userName }}</h2>
 						<p><el-tag effect="dark" round size="large" disable-transitions>{{ user.role }}</el-tag></p>
 					</div>
@@ -38,6 +38,7 @@
 
 <script>
 	import { defineAsyncComponent } from 'vue'
+	import { mapGetters } from 'vuex';
 
 	export default {
 		name: 'userCenter',
@@ -71,21 +72,16 @@
 								title: "密码",
 								component: "password"
 							},
-							{
-								icon: "el-icon-bell",
-								title: "通知设置",
-								component: "pushSettings"
-							}
+							// {
+							// 	icon: "el-icon-bell",
+							// 	title: "消息设置",
+							// 	component: "pushSettings"
+							// }
 						]
 					},
 					{
 						groupName: "数据管理",
 						list: [
-							{
-								icon: "el-icon-coin",
-								title: "存储空间信息",
-								component: "space"
-							},
 							{
 								icon: "el-icon-clock",
 								title: "操作日志",
@@ -93,20 +89,21 @@
 							}
 						]
 					},
-					{
-						groupName: "账号升级",
-						list: [
-							{
-								icon: "el-icon-office-building",
-								title: "升级为企业账号",
-								component: "upToEnterprise"
-							}
-						]
-					}
+					// {
+					// 	groupName: "账号升级",
+					// 	list: [
+					// 		{
+					// 			icon: "el-icon-office-building",
+					// 			title: "升级为企业账号",
+					// 			component: "upToEnterprise"
+					// 		}
+					// 	]
+					// }
 				],
 				user: {
 					userName: "Sakuya",
 					role: "超级管理员",
+					logo: 'img/avatar.jpg'
 				},
 				page: "account"
 			}
@@ -124,6 +121,25 @@
 					}).then(() => {}).catch(() => {})
 				}
 			})
+		},
+		computed: {
+			...mapGetters(['userInfo'])
+		},
+		watch: {
+			userInfo: {
+				handler(userInfo) {
+					if (userInfo && userInfo.user) {
+						this.user.userName = userInfo.user.name;
+						if (userInfo.role && Array.isArray(userInfo.role)) {
+							this.user.role = userInfo.role.map(role => role.name).join('|');
+						}
+						if (userInfo.user.logo) {
+							this.user.logo = userInfo.user.logo;
+						}
+					}
+				},
+				immediate: true // 立即触发一次
+			}
 		},
 		methods: {
 			openPage(item){

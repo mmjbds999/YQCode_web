@@ -15,7 +15,7 @@ axios.interceptors.request.use(
 		if(token){
 			config.headers[sysConfig.TOKEN_NAME] = sysConfig.TOKEN_PREFIX + token
 		}
-		if(!sysConfig.REQUEST_CACHE && config.method == 'get'){
+		if(!sysConfig.REQUEST_CACHE && config.method === 'get'){
 			config.params = config.params || {};
 			config.params['_'] = new Date().getTime();
 		}
@@ -124,6 +124,7 @@ var http = {
 				method: 'post',
 				url: url,
 				data: data,
+				headers: { 'Content-Type': 'multipart/form-data' },
 				...config
 			}).then((response) => {
 				resolve(response.data);
@@ -144,6 +145,7 @@ var http = {
 				method: 'put',
 				url: url,
 				data: data,
+				headers: { 'Content-Type': 'multipart/form-data' },
 				...config
 			}).then((response) => {
 				resolve(response.data);
@@ -164,6 +166,7 @@ var http = {
 				method: 'patch',
 				url: url,
 				data: data,
+				headers: { 'Content-Type': 'multipart/form-data' },
 				...config
 			}).then((response) => {
 				resolve(response.data);
@@ -184,6 +187,7 @@ var http = {
 				method: 'delete',
 				url: url,
 				data: data,
+				headers: { 'Content-Type': 'multipart/form-data' },
 				...config
 			}).then((response) => {
 				resolve(response.data);

@@ -46,7 +46,7 @@
 		},
 		data(){
 			return {
-				menuloading: false,
+				menuloading: true,
 				menuList: [],
 				menuProps: {
 					label: (data)=>{
@@ -68,20 +68,20 @@
 			//加载树数据
 			async getMenu(){
 				this.menuloading = true
-				var res = await this.$API.system.menu.list.get();
+				let res = await this.$API.system.menu.myMenus.get()
 				this.menuloading = false
-				this.menuList = res.data;
+				this.menuList = res.data.menu;
 			},
 			//树点击
 			menuClick(data, node){
-				var pid = node.level==1?undefined:node.parent.data.id;
+				let pid = node.level===1?undefined:node.parent.data.id;
 				this.$refs.save.setData(data, pid)
 				this.$refs.main.$el.scrollTop = 0
 			},
 			//树过滤
 			menuFilterNode(value, data){
 				if (!value) return true;
-				var targetText = data.meta.title;
+				let targetText = data.meta.title;
 				return targetText.indexOf(value) !== -1;
 			},
 			//树拖拽
@@ -91,8 +91,8 @@
 			},
 			//增加
 			async add(node, data){
-				var newMenuName = "未命名" + newMenuIndex++;
-				var newMenuData = {
+				let newMenuName = "未命名" + newMenuIndex++;
+				let newMenuData = {
 					parentId: data ? data.id : "",
 					name: newMenuName,
 					path: "",
@@ -102,43 +102,46 @@
 						type: "menu"
 					}
 				}
+				console.log(newMenuData)
 				this.menuloading = true
-				var res = await this.$API.demo.post.post(newMenuData)
+				let res = await this.$API.system.menu.save.post(newMenuData)
 				this.menuloading = false
-				newMenuData.id = res.data
+				newMenuData.id = res.data.id
 
 				this.$refs.menu.append(newMenuData, node)
 				this.$refs.menu.setCurrentKey(newMenuData.id)
-				var pid = node ? node.data.id : ""
+				let pid = node ? node.data.id : ""
 				this.$refs.save.setData(newMenuData, pid)
 			},
 			//删除菜单
 			async delMenu(){
-				var CheckedNodes = this.$refs.menu.getCheckedNodes()
-				if(CheckedNodes.length == 0){
+				const CheckedNodes = this.$refs.menu.getCheckedNodes();
+				if(CheckedNodes.length === 0){
 					this.$message.warning("请选择需要删除的项")
 					return false;
 				}
 
-				var confirm = await this.$confirm('确认删除已选择的菜单吗？','提示', {
+				const confirm = await this.$confirm('确认删除已选择的菜单吗？', '提示', {
 					type: 'warning',
 					confirmButtonText: '删除',
 					confirmButtonClass: 'el-button--danger'
-				}).catch(() => {})
-				if(confirm != 'confirm'){
+				}).catch(() => {
+				});
+				if(confirm !== 'confirm'){
 					return false
 				}
 
 				this.menuloading = true
-				var reqData = {
+				const reqData = {
 					ids: CheckedNodes.map(item => item.id)
-				}
-				var res = await this.$API.demo.post.post(reqData)
+				};
+				console.log(reqData)
+				const res = await this.$API.system.menu.del.delete(reqData);
 				this.menuloading = false
 
-				if(res.code == 200){
+				if(res.code === 200){
 					CheckedNodes.forEach(item => {
-						var node = this.$refs.menu.getNode(item)
+						const node = this.$refs.menu.getNode(item);
 						if(node.isCurrent){
 							this.$refs.save.setData({})
 						}
