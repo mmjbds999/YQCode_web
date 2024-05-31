@@ -16,7 +16,7 @@
 						</div>
 					</el-header>
 					<el-main class="nopadding">
-						<scTable ref="table" :apiObj="apiObj" stripe highlightCurrentRow >
+						<scTable ref="table" :apiObj="apiObj" stripe highlightCurrentRow @click="rowClick">
 <!--							<el-table-column label="级别" prop="level" width="60">-->
 <!--								<template #default="scope">-->
 <!--									<el-icon v-if="scope.row.level=='error'" style="color: #F56C6C;"><el-icon-circle-close-filled /></el-icon>-->
@@ -27,7 +27,9 @@
 							<el-table-column label="ID" prop="id" width="180"></el-table-column>
 							<el-table-column label="业务名称" prop="title" min-width="240"></el-table-column>
 							<el-table-column label="IP" prop="ip" width="150"></el-table-column>
-							<el-table-column label="操作结果" prop="code" width="150"></el-table-column>
+							<el-table-column label="操作结果" prop="code" width="150">
+								<el-tag type="success">成功</el-tag>
+							</el-table-column>
 							<el-table-column label="执行时间" prop="exeTime" width="150"></el-table-column>
 							<el-table-column label="操作用户" prop="user.name" width="150"></el-table-column>
 							<el-table-column label="日志时间" prop="createTime" width="170"></el-table-column>
@@ -122,9 +124,6 @@
 			}
 		},
 		methods: {
-			upsearch(){
-
-			},
 			rowClick(row){
 				this.infoDrawer = true
 				this.$nextTick(() => {

@@ -16,9 +16,9 @@
 					<el-form-item label="类型" prop="meta.type">
 						<el-radio-group v-model="form.meta.type">
 							<el-radio-button label="menu">菜单</el-radio-button>
+							<el-radio-button label="button">按钮</el-radio-button>
 							<el-radio-button label="iframe">Iframe</el-radio-button>
 							<el-radio-button label="link">外链</el-radio-button>
-							<el-radio-button label="button">按钮</el-radio-button>
 						</el-radio-group>
 					</el-form-item>
 					<el-form-item label="别名" prop="name">
@@ -31,34 +31,34 @@
 					<el-form-item label="路由地址" prop="path">
 						<el-input v-model="form.path" clearable placeholder=""></el-input>
 					</el-form-item>
-					<el-form-item label="重定向" prop="redirect">
-						<el-input v-model="form.redirect" clearable placeholder=""></el-input>
-					</el-form-item>
-					<el-form-item label="菜单高亮" prop="active">
-						<el-input v-model="form.active" clearable placeholder=""></el-input>
-						<div class="el-form-item-msg">子节点或详情页需要高亮的上级菜单路由地址</div>
-					</el-form-item>
+<!--					<el-form-item label="重定向" prop="redirect">-->
+<!--						<el-input v-model="form.redirect" clearable placeholder=""></el-input>-->
+<!--					</el-form-item>-->
+<!--					<el-form-item label="菜单高亮" prop="active">-->
+<!--						<el-input v-model="form.active" clearable placeholder=""></el-input>-->
+<!--						<div class="el-form-item-msg">子节点或详情页需要高亮的上级菜单路由地址</div>-->
+<!--					</el-form-item>-->
 					<el-form-item label="视图" prop="component">
 						<el-input v-model="form.component" clearable placeholder="">
 							<template #prepend>views/</template>
 						</el-input>
-						<div class="el-form-item-msg">如父节点、链接或Iframe等没有视图的菜单不需要填写</div>
+						<div class="el-form-item-msg">如父节点、链接或Iframe等没有视图的菜单不需要填写，对应前端的views/后面的路径</div>
 					</el-form-item>
 					<el-form-item label="颜色" prop="color">
 						<el-color-picker v-model="form.meta.color" :predefine="predefineColors"></el-color-picker>
-
 					</el-form-item>
 					<el-form-item label="是否隐藏" prop="meta.hidden">
 						<el-checkbox v-model="form.meta.hidden">隐藏菜单</el-checkbox>
-						<el-checkbox v-model="form.meta.hiddenBreadcrumb">隐藏面包屑</el-checkbox>
+<!--						<el-checkbox v-model="form.meta.hiddenBreadcrumb">隐藏面包屑</el-checkbox>-->
 						<div class="el-form-item-msg">菜单不显示在导航中，但用户依然可以访问，例如详情页</div>
 					</el-form-item>
-					<el-form-item label="整页路由" prop="fullpage">
-						<el-switch v-model="form.meta.fullpage" />
-					</el-form-item>
-					<el-form-item label="标签" prop="tag">
-						<el-input v-model="form.meta.tag" clearable placeholder=""></el-input>
-					</el-form-item>
+<!--					<el-form-item label="整页路由" prop="fullpage">-->
+<!--						<el-switch v-model="form.meta.fullpage" />-->
+<!--						<div class="el-form-item-msg">正常不选择，特殊情况下，例如要构造单独的fullPage的时候</div>-->
+<!--					</el-form-item>-->
+<!--					<el-form-item label="标签" prop="tag">-->
+<!--						<el-input v-model="form.meta.tag" clearable placeholder=""></el-input>-->
+<!--					</el-form-item>-->
 					<el-form-item>
 						<el-button type="primary" @click="save" :loading="loading">保 存</el-button>
 					</el-form-item>
@@ -66,7 +66,7 @@
 
 			</el-col>
 			<el-col :lg="12" class="apilist">
-				<h2>接口权限</h2>
+				<h2>菜单内容生成</h2>
 				<sc-form-table v-model="form.apiList" :addTemplate="apiListAddTemplate" placeholder="暂无匹配接口权限">
 					<el-table-column prop="code" label="标识" width="150">
 						<template #default="scope">
@@ -104,6 +104,7 @@
 					path: "",
 					component: "",
 					redirect: "",
+					sort: 0,
 					meta:{
 						title: "",
 						icon: "",
@@ -167,9 +168,9 @@
 			//保存
 			async save(){
 				this.loading = true
-				var res = await this.$API.demo.post.post(this.form)
+				let res = await this.$API.system.menu.save.post(this.form)
 				this.loading = false
-				if(res.code == 200){
+				if(res.code === 200){
 					this.$message.success("保存成功")
 				}else{
 					this.$message.warning(res.message)

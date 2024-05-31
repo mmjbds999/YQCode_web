@@ -12,7 +12,7 @@ export default {
 		},
 		save: {
 			url: `${config.API_URL}/menu/save`,
-			name: "新增菜单",
+			name: "保存菜单",
 			post: async function(data){
 				return await http.post(this.url, data, {
 					headers: {
@@ -25,7 +25,18 @@ export default {
 			url: `${config.API_URL}/menu/del`,
 			name: "删除菜单",
 			delete: async function(data){
-				return await http.delete(this.url, data);
+				return await http.delete(this.url, data, {
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				});
+			}
+		},
+		sort: {
+			url: `${config.API_URL}/menu/sort`,
+			name: "菜单排序",
+			post: async function(data){
+				return await http.post(this.url, data);
 			}
 		}
 	},

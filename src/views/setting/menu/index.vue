@@ -87,7 +87,8 @@
 			//树拖拽
 			nodeDrop(draggingNode, dropNode, dropType){
 				this.$refs.save.setData({})
-				this.$message(`拖拽对象：${draggingNode.data.meta.title}, 释放对象：${dropNode.data.meta.title}, 释放对象的位置：${dropType}`)
+				this.$API.system.menu.sort.post({curId: draggingNode.data.id, dropId: dropNode.data.id, position: dropType})
+				// console.log(`拖拽对象：${draggingNode.data.meta.title}, 释放对象：${dropNode.data.meta.title}, 释放对象的位置：${dropType}`)
 			},
 			//增加
 			async add(node, data){
@@ -136,7 +137,7 @@
 					ids: CheckedNodes.map(item => item.id)
 				};
 				console.log(reqData)
-				const res = await this.$API.system.menu.del.delete(reqData);
+				const res = await this.$API.system.menu.del.delete(CheckedNodes.map(item => item.id));
 				this.menuloading = false
 
 				if(res.code === 200){
