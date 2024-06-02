@@ -2,7 +2,7 @@
 	<el-dialog :title="titleMap[mode]" v-model="visible" :width="400" destroy-on-close @closed="$emit('closed')">
 		<el-form :model="form" :rules="rules" ref="dialogForm" label-width="100px" label-position="left">
 			<el-form-item label="所属字典" prop="dic">
-				<el-cascader v-model="form.dic" :options="dic" :props="dicProps" :show-all-levels="false" clearable></el-cascader>
+				<el-cascader v-model="form.dic.id" :options="dic" :props="dicProps" :show-all-levels="false" clearable></el-cascader>
 			</el-form-item>
 			<el-form-item label="项名称" prop="name">
 				<el-input v-model="form.name" clearable></el-input>
@@ -35,7 +35,7 @@
 				isSaveing: false,
 				form: {
 					id: "",
-					dic: "",
+					dic: {},
 					name: "",
 					key: "",
 					yx: "1"

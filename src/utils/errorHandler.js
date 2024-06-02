@@ -4,12 +4,13 @@
  */
 
 export default (error, vm)=>{
+	console.log(error)
 	// 过滤HTTP请求错误
-	if (error === undefined || error === null || typeof error.code !== 'undefined') {
+	if (error === undefined || error === null || typeof error.code !== 'undefined' || error.code === 0) {
 		return false;
 	}
 
-	var errorMap = {
+	let errorMap = {
 		InternalError: "Javascript引擎内部错误",
 		ReferenceError: "未找到对象",
 		TypeError: "使用了错误的类型或对象",
@@ -18,9 +19,9 @@ export default (error, vm)=>{
 		EvalError: "错误的使用了Eval",
 		URIError: "URI错误"
 	}
-	var errorName = errorMap[error.message] || "未知错误"
+	let errorName = errorMap[error.message] || "未知错误"
 
-	console.warn(`[SCUI error]: ${error}`);
+	console.warn(`[YQCode error]: ${error}`);
 	console.error(error);
 	//throw error;
 

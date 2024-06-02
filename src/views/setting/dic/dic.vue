@@ -65,7 +65,7 @@
 			},
 			//获取字典列表
 			async getDic(){
-				var res = await this.$API.system.dic.tree.get();
+				let res = await this.$API.system.dic.tree.get();
 				this.dic = res.data;
 			},
 			//表单提交方法
@@ -73,14 +73,14 @@
 				this.$refs.dialogForm.validate(async (valid) => {
 					if (valid) {
 						this.isSaveing = true;
-						var res = await this.$API.demo.post.post(this.form);
+						let res = await this.$API.system.dic.save.post(this.form);
 						this.isSaveing = false;
-						if(res.code == 200){
+						if(res.code === 200){
 							this.$emit('success', this.form, this.mode)
 							this.visible = false;
 							this.$message.success("操作成功")
 						}else{
-							this.$alert(res.message, "提示", {type: 'error'})
+							await this.$alert(res.message, "提示", {type: 'error'})
 						}
 					}
 				})

@@ -45,7 +45,7 @@
 					<el-table-column label="键值" prop="key" width="150"></el-table-column>
 					<el-table-column label="是否有效" prop="yx" width="100">
 						<template #default="scope">
-							<el-switch v-model="scope.row.yx" @change="changeSwitch($event, scope.row)" :loading="scope.row.$switch_yx" active-value="1" inactive-value="0"></el-switch>
+							<el-switch v-model="scope.row.yx" @change="changeSwitch($event, scope.row)" :loading="scope.row.loadingStatus" active-value="1" inactive-value="0"></el-switch>
 						</template>
 					</el-table-column>
 					<el-table-column label="操作" fixed="right" align="right" width="120">
@@ -72,11 +72,11 @@
 </template>
 
 <script>
-	import dicDialog from './dic'
-	import listDialog from './list'
-	import Sortable from 'sortablejs'
+import dicDialog from './dic'
+import listDialog from './list'
+import Sortable from 'sortablejs'
 
-	export default {
+export default {
 		name: 'dic',
 		components: {
 			dicDialog,
@@ -111,19 +111,21 @@
 		methods: {
 			//加载树数据
 			async getDic(){
-				var res = await this.$API.system.dic.tree.get();
+				let res = await this.$API.system.dic.tree.get();
 				this.showDicloading = false;
-				this.dicList = res.data;
-				//获取第一个节点,设置选中 & 加载明细列表
-				var firstNode = this.dicList[0];
-				if(firstNode){
-					this.$nextTick(() => {
-						this.$refs.dic.setCurrentKey(firstNode.id)
-					})
-					this.listApiParams = {
-						code: firstNode.code
+				if(res && res.data){
+					//获取第一个节点,设置选中 & 加载明细列表
+					this.dicList = res.data;
+					let firstNode = this.dicList[0];
+					if(firstNode){
+						this.$nextTick(() => {
+							this.$refs.dic.setCurrentKey(firstNode.id)
+						})
+						this.listApiParams = {
+							typeId: firstNode.id
+						}
+						this.listApi = this.$API.system.dic.list;
 					}
-					this.listApi = this.$API.system.dic.list;
 				}
 			},
 			//树过滤
@@ -143,9 +145,8 @@
 			dicEdit(data){
 				this.dialog.dic = true
 				this.$nextTick(() => {
-					var editNode = this.$refs.dic.getNode(data.id);
-					var editNodeParentId =  editNode.level==1?undefined:editNode.parent.data.id
-					data.parentId = editNodeParentId
+					let editNode = this.$refs.dic.getNode(data.id);
+					data.parentId = editNode.level === 1 ? undefined : editNode.parent.data.id
 					this.$refs.dicDialog.open('edit').setData(data)
 				})
 			},
@@ -165,7 +166,7 @@
 					//删除节点是否为高亮当前 是的话 设置第一个节点高亮
 					var dicCurrentKey = this.$refs.dic.getCurrentKey();
 					this.$refs.dic.remove(data.id)
-					if(dicCurrentKey == data.id){
+					if(dicCurrentKey === data.id){
 						var firstNode = this.dicList[0];
 						if(firstNode){
 							this.$refs.dic.setCurrentKey(firstNode.id);
@@ -254,7 +255,7 @@
 					this.isListSaveing = true;
 					var res = await this.$API.demo.post.post(formData);
 					this.isListSaveing = false;
-					if(res.code == 200){
+					if(res.code === 200){
 						//这里选择刷新整个表格 OR 插入/编辑现有表格数据
 						this.listDialogVisible = false;
 						this.$message.success("操作成功")
@@ -270,19 +271,19 @@
 			//表格内开关事件
 			changeSwitch(val, row){
 				//1.还原数据
-				row.yx = row.yx == '1'?'0':'1'
+				row.yx = row.yx === '1'?'0':'1'
 				//2.执行加载
-				row.$switch_yx = true;
+				row.loadingStatus = true;
 				//3.等待接口返回后改变值
 				setTimeout(()=>{
-					delete row.$switch_yx;
+					delete row.loadingStatus;
 					row.yx = val;
 					this.$message.success(`操作成功id:${row.id} val:${val}`)
 				}, 500)
 			},
 			//本地更新数据
 			handleDicSuccess(data, mode){
-				if(mode=='add'){
+				if(mode==='add'){
 					data.id = new Date().getTime()
 					if(this.dicList.length > 0){
 						this.$refs.table.upData({

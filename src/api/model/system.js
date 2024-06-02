@@ -42,17 +42,24 @@ export default {
 	},
 	dic: {
 		tree: {
-			url: `${config.API_URL}/system/dic/tree`,
+			url: `${config.API_URL}/dic/tree`,
 			name: "获取字典树",
 			get: async function(){
 				return await http.get(this.url);
 			}
 		},
 		list: {
-			url: `${config.API_URL}/system/dic/list`,
+			url: `${config.API_URL}/dic/list`,
 			name: "字典明细",
 			get: async function(params){
 				return await http.get(this.url, params);
+			}
+		},
+		save: {
+			url: `${config.API_URL}/dic/save`,
+			name: "保存字典",
+			post: async function(data){
+				return await http.post(this.url, data);
 			}
 		},
 		get: {
