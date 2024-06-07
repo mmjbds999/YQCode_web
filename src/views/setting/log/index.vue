@@ -16,7 +16,7 @@
 						</div>
 					</el-header>
 					<el-main class="nopadding">
-						<scTable ref="table" :apiObj="apiObj" stripe highlightCurrentRow @click="rowClick">
+						<scTable ref="table" :apiObj="apiObj" stripe highlightCurrentRow>
 <!--							<el-table-column label="级别" prop="level" width="60">-->
 <!--								<template #default="scope">-->
 <!--									<el-icon v-if="scope.row.level=='error'" style="color: #F56C6C;"><el-icon-circle-close-filled /></el-icon>-->
@@ -117,19 +117,29 @@
 					}
 				],
 				date: [],
-				apiObj: this.$API.system.log.list,
+				apiObj: this.$API.system.log.all,
 				search: {
 					keyword: ""
 				}
 			}
 		},
-		methods: {
-			rowClick(row){
-				this.infoDrawer = true
-				this.$nextTick(() => {
-					this.$refs.info.setData(row)
-				})
+		watch: {
+			date(newVal) {
+				// 当日期选择变化时触发的操作
+				if (newVal && newVal.length === 2) {
+					this.$refs.table.upData({start: newVal[0].toISOString(), end: newVal[1].toISOString()})
+				}else{
+					this.$refs.table.reload({start: "", end: ""})
+				}
 			}
+		},
+		methods: {
+			// rowClick(row){
+			// 	this.infoDrawer = true
+			// 	this.$nextTick(() => {
+			// 		this.$refs.info.setData(row)
+			// 	})
+			// },
 		}
 	}
 </script>

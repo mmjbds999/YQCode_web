@@ -42,10 +42,10 @@
 						</template>
 					</el-table-column>
 					<el-table-column label="名称" prop="name" width="150"></el-table-column>
-					<el-table-column label="键值" prop="key" width="150"></el-table-column>
-					<el-table-column label="是否有效" prop="yx" width="100">
+					<el-table-column label="键值" prop="code" width="150"></el-table-column>
+					<el-table-column label="是否有效" prop="status" width="100">
 						<template #default="scope">
-							<el-switch v-model="scope.row.yx" @change="changeSwitch($event, scope.row)" :loading="scope.row.loadingStatus" active-value="1" inactive-value="0"></el-switch>
+							<el-switch v-model="scope.row.status" @change="changeSwitch($event, scope.row)" :loading="scope.row.loadingStatus" :active-value="1" :inactive-value="0"></el-switch>
 						</template>
 					</el-table-column>
 					<el-table-column label="操作" fixed="right" align="right" width="120">
@@ -146,14 +146,14 @@ export default {
 				this.dialog.dic = true
 				this.$nextTick(() => {
 					let editNode = this.$refs.dic.getNode(data.id);
-					data.parentId = editNode.level === 1 ? undefined : editNode.parent.data.id
+					data.parent = editNode.level === 1 ? undefined : editNode.parent.data.id
 					this.$refs.dicDialog.open('edit').setData(data)
 				})
 			},
 			//树点击事件
 			dicClick(data){
 				this.$refs.table.reload({
-					code: data.code
+					typeId: data.id
 				})
 			},
 			//删除树
@@ -161,26 +161,33 @@ export default {
 				this.$confirm(`确定删除 ${data.name} 项吗？`, '提示', {
 					type: 'warning'
 				}).then(() => {
-					this.showDicloading = true;
+					this.$API.system.dic.delType.delete({ id: data.id }).then(
+						res => {
+							if(res.code === 200){
+								this.showDicloading = true;
 
-					//删除节点是否为高亮当前 是的话 设置第一个节点高亮
-					var dicCurrentKey = this.$refs.dic.getCurrentKey();
-					this.$refs.dic.remove(data.id)
-					if(dicCurrentKey === data.id){
-						var firstNode = this.dicList[0];
-						if(firstNode){
-							this.$refs.dic.setCurrentKey(firstNode.id);
-							this.$refs.table.upData({
-								code: firstNode.code
-							})
-						}else{
-							this.listApi = null;
-							this.$refs.table.tableData = []
+								//删除节点是否为高亮当前 是的话 设置第一个节点高亮
+								var dicCurrentKey = this.$refs.dic.getCurrentKey();
+								this.$refs.dic.remove(data.id)
+								if(dicCurrentKey === data.id){
+									var firstNode = this.dicList[0];
+									if(firstNode){
+										this.$refs.dic.setCurrentKey(firstNode.id);
+										this.$refs.table.upData({
+											code: firstNode.code
+										})
+									}else{
+										this.listApi = null;
+										this.$refs.table.tableData = []
+									}
+								}
+								this.showDicloading = false;
+								this.$message.success("操作成功")
+							}else{
+								this.$alert(res.message, "提示", {type: 'error'})
+							}
 						}
-					}
-
-					this.showDicloading = false;
-					this.$message.success("操作成功")
+					)
 				}).catch(() => {
 
 				})
@@ -197,6 +204,11 @@ export default {
 						const tableData = _this.$refs.table.tableData
 						const currRow = tableData.splice(oldIndex, 1)[0]
 						tableData.splice(newIndex, 0, currRow)
+						_this.$API.system.dic.sort.post({
+							id: currRow.id,
+							newSort: newIndex,
+							oldSort: oldIndex
+						})
 						_this.$message.success("排序成功")
 					}
 				})
@@ -205,9 +217,8 @@ export default {
 			addInfo(){
 				this.dialog.list = true
 				this.$nextTick(() => {
-					var dicCurrentKey = this.$refs.dic.getCurrentKey();
 					const data = {
-						dic: dicCurrentKey
+						type: {id: this.$refs.dic.getCurrentKey()}
 					}
 					this.$refs.listDialog.open().setData(data)
 				})
@@ -221,9 +232,9 @@ export default {
 			},
 			//删除明细
 			async table_del(row, index){
-				var reqData = {id: row.id}
-				var res = await this.$API.demo.post.post(reqData);
-				if(res.code == 200){
+				let reqData = {id: row.id}
+				let res = await this.$API.system.dic.del.delete(reqData);
+				if(res.code === 200){
 					this.$refs.table.tableData.splice(index, 1);
 					this.$message.success("删除成功")
 				}else{
@@ -236,13 +247,21 @@ export default {
 					type: 'warning'
 				}).then(() => {
 					const loading = this.$loading();
+					let ids = [];
 					this.selection.forEach(item => {
+						ids.push(item.id)
 						this.$refs.table.tableData.forEach((itemI, indexI) => {
 							if (item.id === itemI.id) {
 								this.$refs.table.tableData.splice(indexI, 1)
 							}
 						})
 					})
+					this.$API.system.dic.delBatch.delete(ids).then((res) => {
+						if(res.code !== 200){
+							this.$alert(res.message, "提示", {type: 'error'})
+						}
+					})
+
 					loading.close();
 					this.$message.success("操作成功")
 				}).catch(() => {
@@ -271,50 +290,55 @@ export default {
 			//表格内开关事件
 			changeSwitch(val, row){
 				//1.还原数据
-				row.yx = row.yx === '1'?'0':'1'
+				row.status = row.status === 1?0:1
 				//2.执行加载
 				row.loadingStatus = true;
 				//3.等待接口返回后改变值
-				setTimeout(()=>{
-					delete row.loadingStatus;
-					row.yx = val;
-					this.$message.success(`操作成功id:${row.id} val:${val}`)
-				}, 500)
+				this.$API.system.dic.changeStatus.post({
+					id: row.id,
+					status: val
+				}).then(res => {
+					if(res.code === 200){
+						delete row.loadingStatus;
+						row.status = val;
+						this.$message.success(`操作成功!`)
+					}else {
+						this.$alert(res.message, "提示", {type: 'error'})
+					}
+				})
 			},
 			//本地更新数据
 			handleDicSuccess(data, mode){
 				if(mode==='add'){
-					data.id = new Date().getTime()
 					if(this.dicList.length > 0){
 						this.$refs.table.upData({
-							code: data.code
+							typeId: data.id
 						})
 					}else{
 						this.listApiParams = {
-							code: data.code
+							typeId: data.id
 						}
 						this.listApi = this.$API.dic.info;
 					}
-					this.$refs.dic.append(data, data.parentId[0])
+					this.$refs.dic.append(data, data.parent.id)
 					this.$refs.dic.setCurrentKey(data.id)
-				}else if(mode=='edit'){
-					var editNode = this.$refs.dic.getNode(data.id);
+				}else if(mode==='edit'){
+					let editNode = this.$refs.dic.getNode(data.id);
 					//判断是否移动？
-					var editNodeParentId =  editNode.level==1?undefined:editNode.parent.data.id
-					if(editNodeParentId != data.parentId){
-						var obj = editNode.data;
+					let editNodeParentId =  editNode.level===1?undefined:editNode.parent.id
+					if(editNodeParentId !== data.parent.id){
+						let obj = editNode.data;
 						this.$refs.dic.remove(data.id)
-						this.$refs.dic.append(obj, data.parentId[0])
+						this.$refs.dic.append(obj, data.parent.id)
 					}
 					Object.assign(editNode.data, data)
 				}
 			},
 			//本地更新数据
 			handleListSuccess(data, mode){
-				if(mode=='add'){
-					data.id = new Date().getTime()
+				if(mode==='add'){
 					this.$refs.table.tableData.push(data)
-				}else if(mode=='edit'){
+				}else if(mode==='edit'){
 					this.$refs.table.tableData.filter(item => item.id===data.id ).forEach(item => {
 						Object.assign(item, data)
 					})

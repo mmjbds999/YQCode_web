@@ -1,13 +1,17 @@
 <template>
 	<el-form ref="loginForm" :model="form" :rules="rules" label-width="0" size="large" @keyup.enter="login">
 		<el-form-item prop="user">
-			<el-input v-model="form.user" prefix-icon="el-icon-user" clearable :placeholder="$t('login.userPlaceholder')">
-<!--				<template #append>-->
-<!--					<el-select v-model="userType" style="width: 130px;">-->
-<!--						<el-option label="用户" value="user"></el-option>-->
-<!--						<el-option label="超级管理员" value="admin"></el-option>-->
-<!--					</el-select>-->
-<!--				</template>-->
+			<el-input v-model="form.user" prefix-icon="el-icon-user" clearable :placeholder="$t('login.userPlaceholder')" @blur="fetchRoles">
+				<template #append>
+					<el-select v-model="userType" style="width: 130px;">
+						<el-option
+							v-for="role in roles"
+							:key="role.id"
+							:label="role.name"
+							:value="role.id">
+						</el-option>
+					</el-select>
+				</template>
 			</el-input>
 		</el-form-item>
 		<el-form-item prop="password">
@@ -34,12 +38,13 @@
 	export default {
 		data() {
 			return {
-				userType: 'admin',
+				userType: 'user',
 				form: {
 					user: "admin",
 					password: "yqcode@123",
 					autologin: false
 				},
+				roles: [{ name: '普通用户', id: 'user' }], // 用于存储角色选项
 				rules: {
 					user: [
 						{required: true, message: this.$t('login.userError'), trigger: 'blur'}
@@ -52,29 +57,33 @@
 			}
 		},
 		watch:{
-			// userType(val){
-			// 	if(val === 'admin'){
-			// 		this.form.user = 'admin'
-			// 		this.form.password = 'yqcode@123'
-			// 	}else if(val === 'user'){
-			// 		this.form.user = 'test'
-			// 		this.form.password = 'yqcode@test'
-			// 	}
-			// }
+
 		},
 		mounted() {
-
+			this.fetchRoles()
 		},
 		methods: {
+			async fetchRoles(){
+				if(this.form.user){
+					this.$API.auth.preGetRole.get({userName: this.form.user}).then((res)=>{
+						if(res.data.length>0){
+							this.roles = res.data;
+							this.userType = this.roles[0].id
+						}else{
+							this.$message.warning("没有此用户！")
+						}
+					})
+				}
+			},
 			async login(){
-
 				let validate = await this.$refs.loginForm.validate().catch(()=>{})
 				if(!validate){ return false }
 
 				this.isLogin = true
 				let data = {
 					username: this.form.user,
-					password: this.form.password
+					password: this.form.password,
+					roleId: this.userType
 				}
 				//获取token
 				let user = await this.$API.auth.token.post(data)

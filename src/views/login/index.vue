@@ -1,6 +1,6 @@
 <template>
 	<div class="login_bg">
-		<div class="login_adv" style="background-image: url(img/auth_banner.jpg);">
+		<div class="login_adv" style="background-image: url(img/img_2.png);-webkit-clip-path: polygon(0 0, 100% 0, 75% 100%, 0% 100%);clip-path: polygon(0 0, 100% 0, 75% 100%, 0% 100%);width:60%;">
 			<div class="login_adv__title">
 				<h2>YQCode低代码平台</h2>
 				<h4>Mysql/SpringBoot/Vue3</h4>
@@ -25,7 +25,7 @@
 <!--					</template>-->
 <!--				</el-dropdown>-->
 			</div>
-			<div class="login-form">
+			<div class="login-form" style="margin-left: 15%">
 				<div class="login-header">
 					<div class="logo">
 						<img :alt="$CONFIG.APP_NAME" src="img/logo.png">

@@ -124,7 +124,7 @@ var http = {
 				method: 'post',
 				url: url,
 				data: data,
-				headers: { 'Content-Type': 'multipart/form-data' },
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 				...config
 			}).then((response) => {
 				resolve(response.data);
@@ -145,7 +145,7 @@ var http = {
 				method: 'put',
 				url: url,
 				data: data,
-				headers: { 'Content-Type': 'multipart/form-data' },
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 				...config
 			}).then((response) => {
 				resolve(response.data);
@@ -166,7 +166,7 @@ var http = {
 				method: 'patch',
 				url: url,
 				data: data,
-				headers: { 'Content-Type': 'multipart/form-data' },
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 				...config
 			}).then((response) => {
 				resolve(response.data);
@@ -187,7 +187,7 @@ var http = {
 				method: 'delete',
 				url: url,
 				data: data,
-				headers: { 'Content-Type': 'multipart/form-data' },
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 				...config
 			}).then((response) => {
 				resolve(response.data);

@@ -172,8 +172,8 @@
 			//获取数据
 			async getData(){
 				this.loading = true;
-				var reqData = {
-					[config.request.page]: this.currentPage,
+				let reqData = {
+					[config.request.page]: this.currentPage>0 ? this.currentPage - 1 : this.currentPage,
 					[config.request.pageSize]: this.scPageSize,
 					[config.request.prop]: this.prop,
 					[config.request.order]: this.order

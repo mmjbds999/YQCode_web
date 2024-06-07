@@ -8,7 +8,7 @@
 				<el-input v-model="form.name" clearable placeholder="字典显示名称"></el-input>
 			</el-form-item>
 			<el-form-item label="父路径" prop="parentId">
-				<el-cascader v-model="form.parentId" :options="dic" :props="dicProps" :show-all-levels="false" clearable></el-cascader>
+				<el-cascader v-model="form.parent" :options="dic" :props="dicProps" :show-all-levels="false" clearable></el-cascader>
 			</el-form-item>
 		</el-form>
 		<template #footer>
@@ -73,10 +73,10 @@
 				this.$refs.dialogForm.validate(async (valid) => {
 					if (valid) {
 						this.isSaveing = true;
-						let res = await this.$API.system.dic.save.post(this.form);
+						let res = await this.$API.system.dic.saveType.post(this.form);
 						this.isSaveing = false;
 						if(res.code === 200){
-							this.$emit('success', this.form, this.mode)
+							this.$emit('success', res.data, this.mode)
 							this.visible = false;
 							this.$message.success("操作成功")
 						}else{
@@ -90,7 +90,7 @@
 				this.form.id = data.id
 				this.form.name = data.name
 				this.form.code = data.code
-				this.form.parentId = data.parentId
+				this.form.parent = data.parent
 
 				//可以和上面一样单个注入，也可以像下面一样直接合并进去
 				//Object.assign(this.form, data)

@@ -15,5 +15,12 @@ export default {
 		get: async function(data={}){
 			return await http.get(this.url, data);
 		}
+	},
+	preGetRole: {
+		url: `${config.API_URL}/auth/preGetRole`,
+		name: "预获取当前登录用户角色信息",
+		get: async function(data={}){
+			return await http.get(this.url, data);
+		}
 	}
 }
