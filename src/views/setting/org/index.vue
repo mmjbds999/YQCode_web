@@ -15,12 +15,12 @@
 		<el-main class="nopadding">
 			<scTable ref="table" :apiObj="apiObj" row-key="id" @selection-change="selectionChange" hidePagination>
 				<el-table-column type="selection" width="50"></el-table-column>
-				<el-table-column label="部门名称" prop="label" width="250"></el-table-column>
+				<el-table-column label="组织名称" prop="label" width="250"></el-table-column>
 				<el-table-column label="排序" prop="sort" width="150"></el-table-column>
 				<el-table-column label="状态" prop="status" width="150">
 					<template #default="scope">
-						<el-tag v-if="scope.row.status==1" type="success">启用</el-tag>
-						<el-tag v-if="scope.row.status==0" type="danger">停用</el-tag>
+						<el-tag v-if="scope.row.status===1" type="success">启用</el-tag>
+						<el-tag v-if="scope.row.status===0" type="danger">停用</el-tag>
 					</template>
 				</el-table-column>
 				<el-table-column label="创建时间" prop="date" width="180"></el-table-column>
@@ -60,7 +60,7 @@
 				dialog: {
 					save: false
 				},
-				apiObj: this.$API.system.dept.list,
+				apiObj: this.$API.system.org.list,
 				selection: [],
 				search: {
 					keyword: null

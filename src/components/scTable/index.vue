@@ -192,13 +192,18 @@
 					return false;
 				}
 				try {
+					if(res.data === null){
+						this.loading = false;
+						this.emptyText = "暂无数据";
+						return false;
+					}
 					var response = config.parseData(res);
 				}catch(error){
 					this.loading = false;
 					this.emptyText = "数据格式错误";
 					return false;
 				}
-				if(response.code != config.successCode){
+				if(response.code !== config.successCode){
 					this.loading = false;
 					this.emptyText = response.msg;
 				}else{

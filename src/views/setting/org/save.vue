@@ -1,10 +1,10 @@
 <template>
 	<el-dialog :title="titleMap[mode]" v-model="visible" :width="500" destroy-on-close @closed="$emit('closed')">
 		<el-form :model="form" :rules="rules" :disabled="mode=='show'" ref="dialogForm" label-width="100px">
-			<el-form-item label="上级部门" prop="parentId">
+			<el-form-item label="上级组织" prop="parentId">
 				<el-cascader v-model="form.parentId" :options="groups" :props="groupsProps" :show-all-levels="false" clearable style="width: 100%;"></el-cascader>
 			</el-form-item>
-			<el-form-item label="部门名称" prop="label">
+			<el-form-item label="组织名称" prop="label">
 				<el-input v-model="form.label" placeholder="请输入部门名称" clearable></el-input>
 			</el-form-item>
 			<el-form-item label="排序" prop="sort">
@@ -19,7 +19,7 @@
 		</el-form>
 		<template #footer>
 			<el-button @click="visible=false" >取 消</el-button>
-			<el-button v-if="mode!='show'" type="primary" :loading="isSaveing" @click="submit()">保 存</el-button>
+			<el-button v-if="mode!=='show'" type="primary" :loading="isSaveing" @click="submit()">保 存</el-button>
 		</template>
 	</el-dialog>
 </template>
@@ -40,8 +40,8 @@
 				//表单数据
 				form: {
 					id:"",
-					parentId: "",
-					label: "",
+					parent: "",
+					name: "",
 					sort: 1,
 					status: "1",
 					remark: ""
@@ -52,7 +52,7 @@
 						{required: true, message: '请输入排序', trigger: 'change'}
 					],
 					label: [
-						{required: true, message: '请输入部门名称'}
+						{required: true, message: '请输入组织名称'}
 					]
 				},
 				//所需数据选项
@@ -76,7 +76,7 @@
 			},
 			//加载树数据
 			async getGroup(){
-				var res = await this.$API.system.dept.list.get();
+				let res = await this.$API.system.org.list.get();
 				this.groups = res.data;
 			},
 			//表单提交方法
@@ -84,9 +84,9 @@
 				this.$refs.dialogForm.validate(async (valid) => {
 					if (valid) {
 						this.isSaveing = true;
-						var res = await this.$API.demo.post.post(this.form);
+						let res = await this.$API.system.org.save.post(this.form);
 						this.isSaveing = false;
-						if(res.code == 200){
+						if(res.code === 200){
 							this.$emit('success', this.form, this.mode)
 							this.visible = false;
 							this.$message.success("操作成功")

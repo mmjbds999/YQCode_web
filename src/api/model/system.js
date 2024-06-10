@@ -164,14 +164,21 @@ export default {
 			}
 		}
 	},
-	dept: {
+	org: {
 		list: {
-			url: `${config.API_URL}/system/dept/list`,
-			name: "获取部门列表",
+			url: `${config.API_URL}/org/list`,
+			name: "获取组织列表",
 			get: async function(params){
 				return await http.get(this.url, params);
 			}
-		}
+		},
+		save: {
+			url: `${config.API_URL}/org/save`,
+			name: "保存组织",
+			post: async function(params){
+				return await http.post(this.url, params);
+			}
+		},
 	},
 	user: {
 		list: {
