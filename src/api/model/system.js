@@ -179,10 +179,28 @@ export default {
 				return await http.post(this.url, params);
 			}
 		},
+		del: {
+			url: `${config.API_URL}/org/del`,
+			name: "删除组织",
+			delete: async function(params){
+				return await http.delete(this.url, params);
+			}
+		},
+		delBatch: {
+			url: `${config.API_URL}/org/delBatch`,
+			name: "删除组织",
+			delete: async function(params){
+				return await http.delete(this.url, params, {
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				});
+			}
+		}
 	},
 	user: {
 		list: {
-			url: `${config.API_URL}/system/user/list`,
+			url: `${config.API_URL}/user/list`,
 			name: "获取用户列表",
 			get: async function(params){
 				return await http.get(this.url, params);

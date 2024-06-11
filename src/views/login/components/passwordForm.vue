@@ -66,7 +66,7 @@
 			async fetchRoles(){
 				if(this.form.user){
 					this.$API.auth.preGetRole.get({userName: this.form.user}).then((res)=>{
-						if(res.data.length>0){
+						if(res && res.data && res.data.length>0){
 							this.roles = res.data;
 							this.userType = this.roles[0].id
 						}else{

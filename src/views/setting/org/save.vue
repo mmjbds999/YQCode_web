@@ -1,17 +1,17 @@
 <template>
 	<el-dialog :title="titleMap[mode]" v-model="visible" :width="500" destroy-on-close @closed="$emit('closed')">
-		<el-form :model="form" :rules="rules" :disabled="mode=='show'" ref="dialogForm" label-width="100px">
-			<el-form-item label="上级组织" prop="parentId">
-				<el-cascader v-model="form.parentId" :options="groups" :props="groupsProps" :show-all-levels="false" clearable style="width: 100%;"></el-cascader>
+		<el-form :model="form" :rules="rules" :disabled="mode==='show'" ref="dialogForm" label-width="100px">
+			<el-form-item label="上级组织" prop="parent">
+				<el-cascader v-model="form.parent" :options="groups" :props="groupsProps" :show-all-levels="false" clearable style="width: 100%;"></el-cascader>
 			</el-form-item>
-			<el-form-item label="组织名称" prop="label">
-				<el-input v-model="form.label" placeholder="请输入部门名称" clearable></el-input>
+			<el-form-item label="组织名称" prop="name">
+				<el-input v-model="form.name" placeholder="请输入部门名称" clearable></el-input>
 			</el-form-item>
 			<el-form-item label="排序" prop="sort">
-				<el-input-number v-model="form.sort" controls-position="right" :min="1" style="width: 100%;"></el-input-number>
+				<el-input-number v-model="form.sort" controls-position="right" :min="1" style="width: 100px;"></el-input-number>
 			</el-form-item>
 			<el-form-item label="是否有效" prop="status">
-				<el-switch v-model="form.status" :active-value="1" :inactive-value="0"></el-switch>
+				<el-switch v-model="form.status" :active-value="0" :inactive-value="1"></el-switch>
 			</el-form-item>
 			<el-form-item label="备注" prop="remark">
 				<el-input v-model="form.remark" clearable type="textarea"></el-input>
@@ -43,7 +43,7 @@
 					parent: "",
 					name: "",
 					sort: 1,
-					status: "1",
+					status: 0,
 					remark: ""
 				},
 				//验证规则
@@ -51,7 +51,7 @@
 					sort: [
 						{required: true, message: '请输入排序', trigger: 'change'}
 					],
-					label: [
+					name: [
 						{required: true, message: '请输入组织名称'}
 					]
 				},
@@ -59,6 +59,8 @@
 				groups: [],
 				groupsProps: {
 					value: "id",
+					label: 'name', // 设置显示的名称字段
+					children: 'children', // 设置子节点字段
 					emitPath: false,
 					checkStrictly: true
 				}
@@ -99,14 +101,24 @@
 			//表单注入数据
 			setData(data){
 				this.form.id = data.id
-				this.form.label = data.label
+				this.form.name = data.name
 				this.form.status = data.status
 				this.form.sort = data.sort
-				this.form.parentId = data.parentId
+				this.form.parent = !data.parent ? null :data.parent.id
 				this.form.remark = data.remark
+				this.form.createTime = this.formatDate(data.createTime);
 
 				//可以和上面一样单个注入，也可以像下面一样直接合并进去
 				//Object.assign(this.form, data)
+			},
+			formatDate(date) {
+				const d = new Date(date);
+				const year = d.getFullYear();
+				const month = (d.getMonth() + 1).toString().padStart(2, '0');
+				const day = d.getDate().toString().padStart(2, '0');
+				const hours = d.getHours().toString().padStart(2, '0');
+				const minutes = d.getMinutes().toString().padStart(2, '0');
+				return `${year}-${month}-${day} ${hours}:${minutes}`;
 			}
 		}
 	}

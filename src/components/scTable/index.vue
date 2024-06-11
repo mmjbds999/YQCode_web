@@ -192,9 +192,12 @@
 					return false;
 				}
 				try {
-					if(res.data === null){
+					if(res && res.data === null){
 						this.loading = false;
 						this.emptyText = "暂无数据";
+						this.tableData = []; // 确保在 res.data 为空时也能刷新表格
+						this.$refs.scTable.setScrollTop(0);
+						this.$emit('dataChange', res, this.tableData);
 						return false;
 					}
 					var response = config.parseData(res);

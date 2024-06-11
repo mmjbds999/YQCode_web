@@ -6,7 +6,7 @@
 					<el-input placeholder="输入关键字进行过滤" v-model="groupFilterText" clearable></el-input>
 				</el-header>
 				<el-main class="nopadding">
-					<el-tree ref="group" class="menu" node-key="id" :data="group" :current-node-key="''" :highlight-current="true" :expand-on-click-node="false" :filter-node-method="groupFilterNode" @node-click="groupClick"></el-tree>
+					<el-tree ref="group" class="menu" node-key="id" :data="group" :props="defaultProps" :current-node-key="''" :highlight-current="true" :expand-on-click-node="false" :filter-node-method="groupFilterNode" @node-click="groupClick"></el-tree>
 				</el-main>
 			</el-container>
 		</el-aside>
@@ -14,13 +14,13 @@
 				<el-header>
 					<div class="left-panel">
 						<el-button type="primary" icon="el-icon-plus" @click="add"></el-button>
-						<el-button type="danger" plain icon="el-icon-delete" :disabled="selection.length==0" @click="batch_del"></el-button>
-						<el-button type="primary" plain :disabled="selection.length==0">分配角色</el-button>
-						<el-button type="primary" plain :disabled="selection.length==0">密码重置</el-button>
+						<el-button type="danger" plain icon="el-icon-delete" :disabled="selection.length===0" @click="batch_del"></el-button>
+						<el-button type="primary" plain :disabled="selection.length===0">分配角色</el-button>
+						<el-button type="primary" plain :disabled="selection.length===0">密码重置</el-button>
 					</div>
 					<div class="right-panel">
 						<div class="right-panel-search">
-							<el-input v-model="search.name" placeholder="登录账号 / 姓名" clearable></el-input>
+							<el-input v-model="search.name" placeholder="登录账号 / 用户名" clearable></el-input>
 							<el-button type="primary" icon="el-icon-search" @click="upsearch"></el-button>
 						</div>
 					</div>
@@ -31,13 +31,13 @@
 						<el-table-column label="ID" prop="id" width="80" sortable='custom'></el-table-column>
 						<el-table-column label="头像" width="80" column-key="filterAvatar" :filters="[{text: '已上传', value: '1'}, {text: '未上传', value: '0'}]">
 							<template #default="scope">
-								<el-avatar :src="scope.row.avatar" size="small"></el-avatar>
+								<el-avatar :src="scope.row.logo" size="small"></el-avatar>
 							</template>
 						</el-table-column>
-						<el-table-column label="登录账号" prop="userName" width="150" sortable='custom' column-key="filterUserName" :filters="[{text: '系统账号', value: '1'}, {text: '普通账号', value: '0'}]"></el-table-column>
-						<el-table-column label="姓名" prop="name" width="150" sortable='custom'></el-table-column>
-						<el-table-column label="所属角色" prop="groupName" width="200" sortable='custom'></el-table-column>
-						<el-table-column label="加入时间" prop="date" width="170" sortable='custom'></el-table-column>
+						<el-table-column label="登录账号" prop="account" width="150" sortable='custom' column-key="filterUserName" :filters="[{text: '系统账号', value: '1'}, {text: '普通账号', value: '0'}]"></el-table-column>
+						<el-table-column label="用户名" prop="name" width="150" sortable='custom'></el-table-column>
+						<el-table-column label="所属角色" prop="rolesStr" width="200" sortable='custom'></el-table-column>
+						<el-table-column label="创建时间" prop="createTime" width="170" sortable='custom'></el-table-column>
 						<el-table-column label="操作" fixed="right" align="right" width="160">
 							<template #default="scope">
 								<el-button-group>
@@ -77,6 +77,10 @@
 				showGrouploading: false,
 				groupFilterText: '',
 				group: [],
+				defaultProps: {
+					children: 'children',
+					label: 'name'
+				},
 				apiObj: this.$API.system.user.list,
 				selection: [],
 				search: {
@@ -152,9 +156,9 @@
 			//加载树数据
 			async getGroup(){
 				this.showGrouploading = true;
-				var res = await this.$API.system.dept.list.get();
+				var res = await this.$API.system.org.list.get();
 				this.showGrouploading = false;
-				var allNode ={id: '', label: '所有'}
+				var allNode ={id: '', name: '所有'}
 				res.data.unshift(allNode);
 				this.group = res.data;
 			},
@@ -166,7 +170,7 @@
 			//树点击事件
 			groupClick(data){
 				var params = {
-					groupId: data.id
+					orgId: data.id
 				}
 				this.$refs.table.reload(params)
 			},
