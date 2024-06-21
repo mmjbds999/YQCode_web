@@ -10,9 +10,9 @@
 			<el-form-item label="排序" prop="sort">
 				<el-input-number v-model="form.sort" controls-position="right" :min="1" style="width: 100px;"></el-input-number>
 			</el-form-item>
-			<el-form-item label="是否有效" prop="status">
-				<el-switch v-model="form.status" :active-value="0" :inactive-value="1"></el-switch>
-			</el-form-item>
+<!--			<el-form-item label="是否有效" prop="status">-->
+<!--				<el-switch v-model="form.status" :active-value="0" :inactive-value="1"></el-switch>-->
+<!--			</el-form-item>-->
 			<el-form-item label="备注" prop="remark">
 				<el-input v-model="form.remark" clearable type="textarea"></el-input>
 			</el-form-item>

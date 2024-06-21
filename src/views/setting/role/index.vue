@@ -29,8 +29,8 @@
 								v-model="scope.row.status"
 								@change="changeSwitch($event, scope.row)"
 								:loading="scope.row.$switch_status"
-								:active-value="1"
-								:inactive-value="0">
+								:active-value="0"
+								:inactive-value="1">
 							</el-switch>
 						</div>
 					</template>

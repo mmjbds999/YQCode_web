@@ -38,7 +38,7 @@
 	export default {
 		data() {
 			return {
-				userType: 'user',
+				userType: '1',
 				form: {
 					user: "admin",
 					password: "yqcode@123",

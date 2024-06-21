@@ -213,6 +213,20 @@ export default {
 				return await http.post(this.url, data);
 			}
 		},
+		sysSave: {
+			url: `${config.API_URL}/user/sysSave`,
+			name: "保存用户",
+			post: async function(data){
+				return await http.post(this.url, data)
+			}
+		},
+		changeStatus: {
+			url: `${config.API_URL}/user/changeStatus`,
+			name: "修改用户状态",
+			post: async function(params){
+				return await http.post(this.url, params);
+			}
+		},
 		changePassword: {
 			url: `${config.API_URL}/auth/changePassword`,
 			name: "修改密码",

@@ -45,7 +45,7 @@
 					<el-table-column label="键值" prop="code" width="150"></el-table-column>
 					<el-table-column label="是否有效" prop="status" width="100">
 						<template #default="scope">
-							<el-switch v-model="scope.row.status" @change="changeSwitch($event, scope.row)" :loading="scope.row.loadingStatus" :active-value="1" :inactive-value="0"></el-switch>
+							<el-switch v-model="scope.row.status" @change="changeSwitch($event, scope.row)" :loading="scope.row.loadingStatus" :active-value="0" :inactive-value="1"></el-switch>
 						</template>
 					</el-table-column>
 					<el-table-column label="操作" fixed="right" align="right" width="120">
