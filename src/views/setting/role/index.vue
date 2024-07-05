@@ -110,7 +110,7 @@
 			permission(){
 				this.dialog.permission = true
 				this.$nextTick(() => {
-					this.$refs.permissionDialog.open()
+					this.$refs.permissionDialog.open(this.selection)
 				})
 			},
 			//删除

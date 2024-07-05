@@ -1,50 +1,29 @@
 <template>
-	<el-dialog title="角色权限设置" v-model="visible" :width="500" destroy-on-close @closed="$emit('closed')">
+	<el-dialog title="角色权限设置" v-model="visible" :width="600" destroy-on-close @closed="$emit('closed')">
 		<el-tabs tab-position="top">
 			<el-tab-pane label="菜单权限">
 				<div class="treeMain">
-					<el-tree ref="menu" node-key="name" :data="menu.list" :props="menu.props" show-checkbox></el-tree>
+					<el-tree ref="menu" node-key="id" :data="menu.list" :props="menu.props" show-checkbox></el-tree>
 				</div>
 			</el-tab-pane>
 			<el-tab-pane label="数据权限">
 				<el-form label-width="100px" label-position="left">
 					<el-form-item label="规则类型">
-						<el-select v-model="data.dataType" placeholder="请选择">
-							<el-option label="全部可见" value="1"></el-option>
-							<el-option label="本人可见" value="2"></el-option>
-							<el-option label="所在部门可见" value="3"></el-option>
-							<el-option label="所在部门及子级可见" value="4"></el-option>
-							<el-option label="选择的部门可见" value="5"></el-option>
-							<el-option label="自定义" value="6"></el-option>
+						<el-select v-model="dataRolesCK" placeholder="请选择">
+							<el-option v-for="d in dataRoles" :key="d.code" :label="d.name" :value="d.code"></el-option>
 						</el-select>
 					</el-form-item>
-					<el-form-item label="选择部门" v-show="data.dataType=='5'">
+					<el-form-item label="选择部门" v-show="dataRolesCK==='4'">
 						<div class="treeMain" style="width: 100%;">
 							<el-tree ref="dept" node-key="id" :data="data.list" :props="data.props" show-checkbox></el-tree>
 						</div>
 					</el-form-item>
-					<el-form-item label="规则值" v-show="data.dataType=='6'">
-						<el-input v-model="data.rule" clearable type="textarea" :rows="6" placeholder="请输入自定义规则代码"></el-input>
-					</el-form-item>
 				</el-form>
 			</el-tab-pane>
-			<el-tab-pane label="控制台模块">
+			<el-tab-pane label="资源权限（接口）">
 				<div class="treeMain">
-					<el-tree ref="grid" node-key="key" :data="grid.list" :props="grid.props" :default-checked-keys="grid.checked" show-checkbox></el-tree>
+					<el-tree ref="resource" node-key="id" :data="resource.list" :props="resource.props" :default-checked-keys="resource.checked" show-checkbox></el-tree>
 				</div>
-			</el-tab-pane>
-			<el-tab-pane label="控制台">
-				<el-form label-width="100px" label-position="left">
-					<el-form-item label="控制台视图">
-						<el-select v-model="dashboard" placeholder="请选择">
-							<el-option v-for="item in dashboardOptions" :key="item.value" :label="item.label" :value="item.value">
-								<span style="float: left">{{ item.label }}</span>
-								<span style="float: right; color: #8492a6; font-size: 12px">{{ item.views }}</span>
-							</el-option>
-						</el-select>
-						<div class="el-form-item-msg">用于控制角色登录后控制台的视图</div>
-					</el-form-item>
-				</el-form>
 			</el-tab-pane>
 		</el-tabs>
 		<template #footer>
@@ -59,6 +38,7 @@
 		emits: ['success', 'closed'],
 		data() {
 			return {
+				ids: [],
 				visible: false,
 				isSaveing: false,
 				menu: {
@@ -70,15 +50,12 @@
 						}
 					}
 				},
-				grid: {
+				resource: {
 					list: [],
-					checked: ["welcome", "ver", "time", "progress", "echarts", "about"],
+					checked: [],
 					props: {
 						label: (data)=>{
-							return data.title
-						},
-						disabled: (data)=>{
-							return data.isFixed
+							return data.url
 						}
 					}
 				},
@@ -86,7 +63,11 @@
 					dataType :"1",
 					list: [],
 					checked: [],
-					props: {},
+					props: {
+						label: (data)=>{
+							return data.name
+						}
+					},
 					rule: ""
 				},
 				dashboard: "0",
@@ -102,54 +83,107 @@
 						label: '工作台',
 						views: 'work'
 					},
-				]
+				],
+				dataRoles: [],
+				dataRolesCK: 0,
+				curRole:{}
 			}
 		},
 		mounted() {
-			this.getMenu()
-			this.getDept()
-			this.getGrid()
+
+		},
+		watch: {
+			curRole(newVal) {
+				if (newVal) {
+					this.getMenu()
+					this.getDic()
+					this.getResource()
+					this.getDept()
+				}
+			}
 		},
 		methods: {
-			open(){
+			getDic(){
+				this.$API.system.dic.getDicByTypeCode.get({typeCode: "dataRole"}).then(res => {
+					if(res.code === 200){
+						this.dataRoles = res.data
+					}
+				})
+			},
+			open(objs){
+				this.ids = objs.map(item => item.id)
+				this.$API.system.role.getRoleById.get({id: this.ids[0]}).then(res => {
+					if(res.code === 200){
+						this.curRole = res.data
+						this.dataRolesCK = res.data.dataRole
+					}
+				})
 				this.visible = true;
 			},
 			submit(){
 				this.isSaveing = true;
+				let checkedKeys = this.$refs.menu.getCheckedKeys().concat(this.$refs.menu.getHalfCheckedKeys())
+				let checkedKeys_dept = this.$refs.dept.getCheckedKeys().concat(this.$refs.dept.getHalfCheckedKeys())
+				let checkedKeys_resource = this.$refs.resource.getCheckedKeys().concat(this.$refs.resource.getHalfCheckedKeys())
+				const filteredAndConvertedKeys = checkedKeys_resource
+					.filter(key => !isNaN(key)) // 过滤掉非数字字符串
+					.map(Number); // 将剩余的字符串转换为数字
 
-				//选中的和半选的合并后传值接口
-				var checkedKeys = this.$refs.menu.getCheckedKeys().concat(this.$refs.menu.getHalfCheckedKeys())
-				console.log(checkedKeys)
+				const param = {
+					roleId: this.ids[0],
+					menuIds: checkedKeys,
+					dataRole: this.dataRolesCK+'',
+					resourceIds: filteredAndConvertedKeys,
+					dataRoleOrgIds: checkedKeys_dept
+				}
 
-				var checkedKeys_dept = this.$refs.dept.getCheckedKeys().concat(this.$refs.dept.getHalfCheckedKeys())
-				console.log(checkedKeys_dept)
-
-				setTimeout(()=>{
-					this.isSaveing = false;
-					this.visible = false;
-					this.$message.success("操作成功")
-					this.$emit('success')
-				},1000)
+				this.$API.system.role.permissions.post(param).then(res => {
+					if (res.code === 200){
+						this.$message.success("授权保存成功！")
+						this.visible = false;
+					}else{
+						this.$message.error(res.msg)
+					}
+				})
+				this.isSaveing = false;
 			},
 			async getMenu(){
 				let res = await this.$API.system.menu.list.get()
-				this.menu.list = res.data
+				this.menu.list = res.data.menu
 
-				//获取接口返回的之前选中的和半选的合并，处理过滤掉有叶子节点的key
-				this.menu.checked = ["system", "user", "user.add", "user.edit", "user.del", "directive.edit", "other", "directive"]
-				this.$nextTick(() => {
-					let filterKeys = this.menu.checked.filter(key => this.$refs.menu.getNode(key).isLeaf)
-					this.$refs.menu.setCheckedKeys(filterKeys, true)
-				})
+				let checkedRes = await this.$API.system.menu.getMenuIdsByRoleId.get({roleId: this.ids[0]})
+				if(checkedRes.code === 200){
+					this.menu.checked = checkedRes.data
+					if(checkedRes.data.length > 0){
+						this.$nextTick(() => {
+							let filterKeys = this.menu.checked.filter(key => this.$refs.menu.getNode(key).isLeaf)
+							this.$refs.menu.setCheckedKeys(filterKeys, true)
+						})
+					}
+				}
 			},
 			async getDept(){
-				var res = await this.$API.system.dept.list.get();
+				let res = await this.$API.system.org.list.get({isUsed: true});
 				this.data.list = res.data
-				this.data.checked = ["12", "2", "21", "22", "1"]
+				this.data.checked = this.curRole.orgIds?this.curRole.orgIds.split(","):[]
 				this.$nextTick(() => {
 					let filterKeys = this.data.checked.filter(key => this.$refs.dept.getNode(key).isLeaf)
 					this.$refs.dept.setCheckedKeys(filterKeys, true)
 				})
+			},
+			async getResource() {
+				let res = await this.$API.system.resource.list.get();
+				this.resource.list = res.data
+				let checkedRes = await this.$API.system.resource.getRoleResources.get({roleId: this.ids[0]})
+				if(checkedRes.code === 200){
+					this.resource.checked = checkedRes.data
+					if(checkedRes.data.length > 0){
+						this.$nextTick(() => {
+							let filterKeys = this.resource.checked.filter(key => this.$refs.resource.getNode(key).isLeaf)
+							this.$refs.resource.setCheckedKeys(filterKeys, true)
+						})
+					}
+				}
 			},
 			getGrid(){
 				this.grid.list = [
@@ -186,5 +220,5 @@
 </script>
 
 <style scoped>
-	.treeMain {height:280px;overflow: auto;border: 1px solid #dcdfe6;margin-bottom: 10px;}
+	.treeMain {height:400px;overflow: auto;border: 1px solid #dcdfe6;margin-bottom: 10px;}
 </style>

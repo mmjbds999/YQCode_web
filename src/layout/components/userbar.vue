@@ -1,50 +1,50 @@
 <template>
 	<div class="user-bar">
-		<div class="panel-item hidden-sm-and-down" @click="search">
-			<el-icon><el-icon-search /></el-icon>
-		</div>
+<!--		<div class="panel-item hidden-sm-and-down" @click="search">-->
+<!--			<el-icon><el-icon-search /></el-icon>-->
+<!--		</div>-->
 		<div class="screen panel-item hidden-sm-and-down" @click="screen">
 			<el-icon><el-icon-full-screen /></el-icon>
 		</div>
-		<div class="tasks panel-item" @click="tasks">
-			<el-icon><el-icon-sort /></el-icon>
-		</div>
-		<div class="msg panel-item" @click="showMsg">
-			<el-badge :hidden="msgList.length==0" :value="msgList.length" class="badge" type="danger">
-				<el-icon><el-icon-chat-dot-round /></el-icon>
-			</el-badge>
-			<el-drawer title="新消息" v-model="msg" :size="400" append-to-body destroy-on-close>
-				<el-container>
-					<el-main class="nopadding">
-						<el-scrollbar>
-							<ul class="msg-list">
-								<li v-for="item in msgList" v-bind:key="item.id">
-									<a :href="item.link" target="_blank">
-										<div class="msg-list__icon">
-											<el-badge is-dot type="danger">
-												<el-avatar :size="40" :src="item.avatar"></el-avatar>
-											</el-badge>
-										</div>
-										<div class="msg-list__main">
-											<h2>{{item.title}}</h2>
-											<p>{{item.describe}}</p>
-										</div>
-										<div class="msg-list__time">
-											<p>{{item.time}}</p>
-										</div>
-									</a>
-								</li>
-								<el-empty v-if="msgList.length==0" description="暂无新消息" :image-size="100"></el-empty>
-							</ul>
-						</el-scrollbar>
-					</el-main>
-					<el-footer>
-						<el-button type="primary">消息中心</el-button>
-						<el-button @click="markRead">全部设为已读</el-button>
-					</el-footer>
-				</el-container>
-			</el-drawer>
-		</div>
+<!--		<div class="tasks panel-item" @click="tasks">-->
+<!--			<el-icon><el-icon-sort /></el-icon>-->
+<!--		</div>-->
+<!--		<div class="msg panel-item" @click="showMsg">-->
+<!--			<el-badge :hidden="msgList.length==0" :value="msgList.length" class="badge" type="danger">-->
+<!--				<el-icon><el-icon-chat-dot-round /></el-icon>-->
+<!--			</el-badge>-->
+<!--			<el-drawer title="新消息" v-model="msg" :size="400" append-to-body destroy-on-close>-->
+<!--				<el-container>-->
+<!--					<el-main class="nopadding">-->
+<!--						<el-scrollbar>-->
+<!--							<ul class="msg-list">-->
+<!--								<li v-for="item in msgList" v-bind:key="item.id">-->
+<!--									<a :href="item.link" target="_blank">-->
+<!--										<div class="msg-list__icon">-->
+<!--											<el-badge is-dot type="danger">-->
+<!--												<el-avatar :size="40" :src="item.avatar"></el-avatar>-->
+<!--											</el-badge>-->
+<!--										</div>-->
+<!--										<div class="msg-list__main">-->
+<!--											<h2>{{item.title}}</h2>-->
+<!--											<p>{{item.describe}}</p>-->
+<!--										</div>-->
+<!--										<div class="msg-list__time">-->
+<!--											<p>{{item.time}}</p>-->
+<!--										</div>-->
+<!--									</a>-->
+<!--								</li>-->
+<!--								<el-empty v-if="msgList.length==0" description="暂无新消息" :image-size="100"></el-empty>-->
+<!--							</ul>-->
+<!--						</el-scrollbar>-->
+<!--					</el-main>-->
+<!--					<el-footer>-->
+<!--						<el-button type="primary">消息中心</el-button>-->
+<!--						<el-button @click="markRead">全部设为已读</el-button>-->
+<!--					</el-footer>-->
+<!--				</el-container>-->
+<!--			</el-drawer>-->
+<!--		</div>-->
 		<el-dropdown class="user panel-item" trigger="click" @command="handleUser">
 			<div class="user-avatar">
 				<el-avatar :size="30" :src="userLogo">{{ userNameF }}</el-avatar>
@@ -85,7 +85,7 @@
 			return {
 				userName: "",
 				userNameF: "",
-				userLogo: "img/avatar.jpg",
+				userLogo: "",
 				searchVisible: false,
 				tasksVisible: false,
 				msg: false,

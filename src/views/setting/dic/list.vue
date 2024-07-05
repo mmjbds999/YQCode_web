@@ -10,9 +10,9 @@
 			<el-form-item label="键值" prop="code">
 				<el-input v-model="form.code" clearable></el-input>
 			</el-form-item>
-			<el-form-item label="是否有效" prop="status">
-				<el-switch v-model="form.status" active-value="1" inactive-value="0"></el-switch>
-			</el-form-item>
+<!--			<el-form-item label="是否有效" prop="status">-->
+<!--				<el-switch v-model="form.status" active-value="0" inactive-value="1"></el-switch>-->
+<!--			</el-form-item>-->
 		</el-form>
 		<template #footer>
 			<el-button @click="visible=false" >取 消</el-button>
@@ -38,7 +38,7 @@
 					type: {},
 					name: "",
 					code: "",
-					status: "1"
+					status: "0"
 				},
 				rules: {
 					dic: [
@@ -47,7 +47,7 @@
 					name: [
 						{required: true, message: '请输入项名称'}
 					],
-					key: [
+					code: [
 						{required: true, message: '请输入键值'}
 					]
 				},
@@ -71,6 +71,7 @@
 			open(mode='add'){
 				this.mode = mode;
 				this.visible = true;
+				this.form.status = 0;
 				return this;
 			},
 			//获取字典列表

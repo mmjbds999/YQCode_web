@@ -65,12 +65,14 @@
 						{required: true, message: '请输入真实姓名'}
 					],
 					password: [
-						{required: true, message: '请输入登录密码'}
+						{required: true, message: '请输入登录密码'},
+						{min: 6, message: '密码长度不能小于6位'}
 					],
 					password2: [
 						{required: true, message: '请再次输入密码'},
+						{min: 6, message: '密码长度不能小于6位'},
 						{validator: (rule, value, callback) => {
-							if (value != this.form.password) {
+							if (value !== this.form.password) {
 								callback(new Error('两次输入密码不一致!'));
 							}else{
 								callback();
@@ -138,7 +140,7 @@
 			},
 			//加载树数据
 			async getGroup(){
-				let res = await this.$API.system.role.list.get();
+				let res = await this.$API.system.role.allUsed.get();
 				this.groups = res.data;
 			},
 			async getDept(){
@@ -153,7 +155,12 @@
 						var res = await this.$API.system.user.sysSave.post(this.form);
 						this.isSaveing = false;
 						if(res.code === 200){
-							this.$emit('success', this.form, this.mode)
+							let d = res.data
+							d.orgName = this.form.orgName
+							d.rolesStr = this.form.rolesStr
+							d.orgId = this.form.orgId
+							d.rolesId = this.form.rolesId
+							this.$emit('success', d, this.mode)
 							this.visible = false;
 							this.$message.success("操作成功")
 						}else{

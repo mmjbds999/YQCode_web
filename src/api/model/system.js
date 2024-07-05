@@ -45,7 +45,14 @@ export default {
 			post: async function(params){
 				return await http.post(this.url, params);
 			}
-		}
+		},
+		getMenuIdsByRoleId: {
+			url: `${config.API_URL}/menu/getMenuIdsByRoleId`,
+			name: "获取当前角色的菜单ids",
+			get: async function(params){
+				return await http.get(this.url, params);
+			}
+		},
 	},
 	dic: {
 		tree: {
@@ -121,12 +128,26 @@ export default {
 			get: async function(params){
 				return await http.get(this.url, params);
 			}
+		},
+		getDicByTypeCode: {
+			url: `${config.API_URL}/dic/getDicByTypeCode`,
+			name: "根据字典类型获取字典数据",
+			get: async function(params){
+				return await http.get(this.url, params)
+			}
 		}
 	},
 	role: {
 		list: {
 			url: `${config.API_URL}/role/list`,
 			name: "获取角色列表",
+			get: async function(params){
+				return await http.get(this.url, params);
+			}
+		},
+		allUsed: {
+			url: `${config.API_URL}/role/allUsed`,
+			name: "获取所有启用的角色列表",
 			get: async function(params){
 				return await http.get(this.url, params);
 			}
@@ -161,6 +182,24 @@ export default {
 			name: "修改角色状态",
 			post: async function(params){
 				return await http.post(this.url, params);
+			}
+		},
+		getRoleById: {
+			url: `${config.API_URL}/role/getRoleById`,
+			name: "根据id获取角色",
+			get: async function(params){
+				return await http.get(this.url, params);
+			}
+		},
+		permissions: {
+			url: `${config.API_URL}/role/permissions`,
+			name: "角色授权",
+			post: async function(params){
+				return await http.post(this.url, params, {
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				});
 			}
 		}
 	},
@@ -232,6 +271,51 @@ export default {
 			name: "修改密码",
 			post: async function(data={}){
 				return await http.post(this.url, data);
+			}
+		},
+		del: {
+			url: `${config.API_URL}/user/del`,
+			name: "删除用户",
+			delete: async function(params){
+				return await http.delete(this.url, params)
+			}
+		},
+		delBatch: {
+			url: `${config.API_URL}/user/delBatch`,
+			name: "批量删除用户",
+			delete: async function(params){
+				return await http.delete(this.url, params, {
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				});
+			}
+		},
+		resetPassword: {
+			url: `${config.API_URL}/user/resetPwdBatch`,
+			name: "重置密码-批量",
+			post: async function(params){
+				return await http.post(this.url, params, {
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				});
+			}
+		},
+	},
+	resource: {
+		list: {
+			url: `${config.API_URL}/resource/all`,
+			name: "获取资源列表",
+			get: async function(params){
+				return await http.get(this.url, params);
+			}
+		},
+		getRoleResources: {
+			url: `${config.API_URL}/resource/getRoleResources`,
+			name: "获取角色资源",
+			get: async function(params){
+				return await http.get(this.url, params);
 			}
 		}
 	},
