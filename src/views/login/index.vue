@@ -2,13 +2,13 @@
 	<div class="login_bg">
 		<div class="login_adv" style="background-image: url(img/img_2.png);-webkit-clip-path: polygon(0 0, 100% 0, 75% 100%, 0% 100%);clip-path: polygon(0 0, 100% 0, 75% 100%, 0% 100%);width:60%;">
 			<div class="login_adv__title">
-				<h2>YQCode低代码平台</h2>
-				<h4>Mysql/SpringBoot/Vue3</h4>
-				<p>便捷高效的低代码/无代码平台</p>
+				<h2>{{$CONFIG.APP_NAME}}</h2>
+				<h4>敏捷、高效、创新、可靠</h4>
+				<p>{{$CONFIG.APP_DESC}}</p>
 			</div>
 			<div class="login_adv__mask"></div>
 			<div class="login_adv__bottom">
-				© YQCode alpha@0.0.1
+				© {{$CONFIG.APP_NAME}} {{$CONFIG.APP_VER}}
 			</div>
 		</div>
 		<div class="login_main">
@@ -28,7 +28,7 @@
 			<div class="login-form" style="margin-left: 15%">
 				<div class="login-header">
 					<div class="logo">
-						<img :alt="$CONFIG.APP_NAME" src="img/logo.png">
+						<img :alt="$CONFIG.APP_NAME" :src="$CONFIG.APP_LOGO">
 						<label>{{$CONFIG.APP_NAME}}</label>
 					</div>
 				</div>

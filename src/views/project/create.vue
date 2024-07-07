@@ -1,57 +1,26 @@
 <template>
 	<el-main>
-		<el-card shadow="never" header="分步表单">
-			<el-steps :active="active" align-center style="margin-bottom: 20px;">
-				<el-step title="项目基础信息"></el-step>
-				<el-step title="确认转账信息"></el-step>
-				<el-step title="完成"></el-step>
-			</el-steps>
+		<el-card shadow="never" header="创建项目">
 			<el-row>
-				<el-col :lg="{span: 8, offset: 8}">
-					<el-form v-if="active===0" ref="stepForm_0" :model="form" :rules="rules" label-position="top">
+				<el-col :lg="{span: 16, offset: 4}">
+					<el-form ref="form" :model="form" :rules="rules" label-position="top">
 						<el-form-item label="项目名称" prop="name">
-							<el-input clearable v-model="form.name"></el-input>
+							<el-input clearable v-model="form.name" placeholder="请输入项目名称"></el-input>
 						</el-form-item>
-						<el-form-item label="英文名" prop="name">
-							<el-input clearable></el-input>
+						<el-form-item label="英文名" prop="enName">
+							<el-input clearable v-model="form.enName" placeholder="请输入英文名"></el-input>
 						</el-form-item>
-						<el-form-item label="包结构" prop="name">
-							<el-input placeholder="例:com.hy.yqcode" clearable></el-input>
-						</el-form-item>
+<!--						<el-form-item label="包结构" prop="packageName">-->
+<!--							<el-input placeholder="例:com.hy.yqcode" clearable v-model="form.packageName"></el-input>-->
+<!--						</el-form-item>-->
 						<el-form-item label="LOGO">
-							<sc-upload icon="el-icon-picture" title="上传logo" :cropper="true" :compress="1" :aspectRatio="1/1"></sc-upload>
+							<sc-upload v-model="form.logo" icon="el-icon-picture" title="上传logo" :cropper="true" :compress="1" :aspectRatio="1/1"></sc-upload>
 						</el-form-item>
 						<el-form-item label="项目简介" prop="description">
-							<el-input type="textarea" :rows="4" clearable></el-input>
-						</el-form-item>
-<!--						<el-form-item label="转账金额" prop="amount">-->
-<!--							<el-input v-model="form.amount"></el-input>-->
-<!--						</el-form-item>-->
-					</el-form>
-					<el-form v-if="active==1" ref="stepForm_1" :model="form" :rules="rules" label-position="top">
-						<el-alert title="确认转账后，资金将直接打入对方账户，无法退回。" type="warning" show-icon style="margin-bottom: 15px;"/>
-						<el-descriptions :column="1" border>
-							<el-descriptions-item label="付款账户">{{form.paymentAccount}}</el-descriptions-item>
-							<el-descriptions-item label="收款账户">{{form.collectionAccount}}</el-descriptions-item>
-							<el-descriptions-item label="收款人姓名">{{form.collectionName}}</el-descriptions-item>
-							<el-descriptions-item label="转账金额">{{form.amount}} 元</el-descriptions-item>
-						</el-descriptions>
-						<el-divider></el-divider>
-						<el-form-item label="支付密码" prop="payPassword">
-							<el-input v-model="form.payPassword" show-password placeholder="请输入"></el-input>
+							<el-input type="textarea" :rows="4" v-model="form.description" clearable placeholder="请输入项目简介"></el-input>
 						</el-form-item>
 					</el-form>
-					<div v-if="active==2">
-						<el-result icon="success" title="操作成功" sub-title="预计两小时内到账">
-							<template #extra>
-								<el-button type="primary" @click="again">再转一笔</el-button>
-								<el-button>查看账单</el-button>
-							</template>
-						</el-result>
-					</div>
-					<el-button v-if="active>0 && active<2" @click="pre" :disabled="submitLoading">上一步</el-button>
-					<el-button v-if="active<1" type="primary" @click="next">下一步</el-button>
-					<el-button v-if="active==1" type="primary" @click="submit" :loading="submitLoading">提交</el-button>
+					<el-button type="primary" @click="submit" :loading="submitLoading">创建</el-button>
 				</el-col>
 			</el-row>
 		</el-card>
@@ -63,46 +32,33 @@
 		name: 'create',
 		data() {
 			return {
-				active: 0,
 				submitLoading: false,
 				form: {
-					name: 'lolicode@scui.com',
-					collectionAccount: 'test@example.com',
-					collectionName: 'Lolowan',
-					amount: '100',
-					payPassword: ''
+					name: '测试项目',
+					enName: 'test',
+					// packageName: 'com.hy.test',
+					logo: '',
+					description: '测试'
 				},
 				rules: {
-					paymentAccount: [
+					name: [
 						{
 							required: true,
-							message: '请选择付款账户',
+							message: '请输入项目名称',
 						}
 					],
-					collectionAccount: [
+					enName: [
 						{
 							required: true,
-							message: '请输入收款账户',
+							message: '请输入英文名',
 						}
 					],
-					collectionName: [
-						{
-							required: true,
-							message: '请输入收款人姓名',
-						}
-					],
-					amount: [
-						{
-							required: true,
-							message: '请输入转账金额',
-						}
-					],
-					payPassword: [
-						{
-							required: true,
-							message: '需要支付密码才能进行支付',
-						}
-					]
+					// packageName: [
+					// 	{
+					// 		required: true,
+					// 		message: '请输入包结构',
+					// 	}
+					// ]
 				}
 			}
 		},
@@ -110,44 +66,27 @@
 
 		},
 		methods: {
-			//下一步
-			next(){
-				const formName = `stepForm_${this.active}`
-				this.$refs[formName].validate((valid) => {
-					if (valid) {
-						this.active += 1
-					}else{
-						return false
-					}
-				})
-			},
-			//上一步
-			pre(){
-				this.active -= 1
-			},
 			//提交
 			submit(){
-				const formName = `stepForm_${this.active}`
-				this.$refs[formName].validate((valid) => {
+				this.$refs['form'].validate((valid) => {
 					if (valid) {
 						this.submitLoading = true
-						setTimeout(()=>{
-							this.submitLoading = false
-							this.active += 1
-						},1000)
+						this.$API.business.project.save.post(this.form).then(res => {
+							if(res.code === 200){
+								this.submitLoading = false
+								this.$message.success('创建成功')
+								// this.$router.push('/project/list')
+							}
+						})
 					}else{
 						return false
 					}
 				})
-			},
-			//再来一次
-			again(){
-				this.active = 0
 			}
 		}
 	}
 </script>
 
 <style scoped>
-	.el-steps:deep(.is-finish) .el-step__line {background: var(--el-color-primary);}
+
 </style>

@@ -2,11 +2,17 @@ const DEFAULT_CONFIG = {
 	//标题
 	APP_NAME: process.env.VUE_APP_TITLE,
 
+	//LOGO
+	APP_LOGO: 'img/logo.png',
+
+	//简介
+	APP_DESC: "基于Vue3.0+Element-Plus+Vite2.0+SpringBoot2.65+JPA+Mybatis的快速开发框架",
+
 	//首页地址
 	DASHBOARD_URL: "/dashboard",
 
 	//版本号
-	APP_VER: "0.0.1",
+	APP_VER: "alpha@0.0.1",
 
 	//内核版本号
 	CORE_VER: "0.0.1",

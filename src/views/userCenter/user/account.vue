@@ -68,6 +68,8 @@
 				let user = await this.$API.auth.getUser.get()
 				if(user.code === 200){
 					this.user = user.data
+				}else{
+					this.$message.error(user.message)
 				}
 			},
 			async save(){

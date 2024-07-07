@@ -2,22 +2,22 @@
 	<el-card shadow="hover" header="欢迎">
 		<div class="welcome">
 			<div class="logo">
-				<img src="img/logo.png">
-				<h2>欢迎体验 YQCode  <a style="color: #4698ce" href="/#/usercenter">立即开始</a></h2>
+				<img :src="$CONFIG.APP_LOGO">
+				<h2>欢迎使用 {{$CONFIG.APP_NAME}} </h2>
 			</div>
 			<div class="tips">
-				<div class="tips-item">
-					<div class="tips-item-icon"><el-icon><el-icon-menu/></el-icon></div>
-					<div class="tips-item-message">这里是项目控制台，你可以点击右上方的“自定义”按钮来添加移除或者移动部件。</div>
-				</div>
+<!--				<div class="tips-item">-->
+<!--					<div class="tips-item-icon"><el-icon><el-icon-menu/></el-icon></div>-->
+<!--					<div class="tips-item-message">这里是项目控制台，你可以点击右上方的“自定义”按钮来添加移除或者移动部件。</div>-->
+<!--				</div>-->
 				<div class="tips-item">
 					<div class="tips-item-icon"><el-icon><el-icon-promotion/></el-icon></div>
-					<div class="tips-item-message">项目基于Mysql+SpringBoot+Vue3（SCUI）。</div>
+					<div class="tips-item-message">{{$CONFIG.APP_DESC}}</div>
 				</div>
-				<div class="tips-item">
-					<div class="tips-item-icon"><el-icon><el-icon-milk-tea/></el-icon></div>
-					<div class="tips-item-message">目前项目实现了快速的中后台系统0代码、低代码开发，后期预计会持续加入客户端的低代码开发!</div>
-				</div>
+<!--				<div class="tips-item">-->
+<!--					<div class="tips-item-icon"><el-icon><el-icon-milk-tea/></el-icon></div>-->
+<!--					<div class="tips-item-message">目前项目实现了快速的中后台系统0代码、低代码开发，后期预计会持续加入客户端的低代码开发!</div>-->
+<!--				</div>-->
 			</div>
 <!--			<div class="actions">-->
 <!--				<el-button type="primary" icon="el-icon-check" size="large" @click="godoc">文档</el-button>-->
