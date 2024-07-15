@@ -17,9 +17,23 @@ export default {
 				return await http.post(this.url, params);
 			}
 		},
-		checkStatus: {
-			url: `${config.API_URL}/projects/checkStartStatus`,
-			name: "检查项目状态",
+		start: {
+			url: `${config.API_URL}/projects/start`,
+			name: "启动项目",
+			get: async function(params){
+				return await http.get(this.url, params);
+			}
+		},
+		stop: {
+			url: `${config.API_URL}/projects/stop`,
+			name: "停止项目",
+			get: async function(params){
+				return await http.get(this.url, params);
+			}
+		},
+		restart: {
+			url: `${config.API_URL}/projects/restart`,
+			name: "重启项目",
 			get: async function(params){
 				return await http.get(this.url, params);
 			}

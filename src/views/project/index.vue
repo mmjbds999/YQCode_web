@@ -40,23 +40,30 @@
 				<el-table-column label="操作" fixed="right" align="right" width="450">
 					<template #default="scope">
 						<el-button-group>
-							<el-tooltip content="Java后端启动" placement="top">
-								<el-button v-if="!scope.row.isJavaStart" icon="el-icon-CaretRight" type="primary" @click="start(scope.row.id, 'java')" >JAVA</el-button>
+							<!-- Java后端启动/重启 -->
+							<el-tooltip content="Java后端启动" placement="top" v-if="!scope.row.isJavaStart">
+								<el-button icon="el-icon-CaretRight" type="primary" @click="start(scope.row.id, 'java')">JAVA</el-button>
 							</el-tooltip>
-							<el-tooltip content="Java后端重启" placement="top">
-								<el-button v-if="scope.row.isJavaStart" icon="el-icon-RefreshRight" type="warning" @click="restart(scope.row.id, 'java')">JAVA</el-button>
+							<el-tooltip content="Java后端重启" placement="top" v-else>
+								<el-button icon="el-icon-RefreshRight" type="warning" @click="restart(scope.row.id, 'java')">JAVA</el-button>
 							</el-tooltip>
-							<el-tooltip content="Java后端停止" placement="top">
-								<el-button v-if="scope.row.isJavaStart" icon="el-icon-SwitchButton" type="danger" @click="stop(scope.row.id, 'java')">JAVA</el-button>
+
+							<!-- Java后端停止 -->
+							<el-tooltip content="Java后端停止" placement="top" v-if="scope.row.isJavaStart">
+								<el-button icon="el-icon-SwitchButton" type="danger" @click="stop(scope.row.id, 'java')">JAVA</el-button>
 							</el-tooltip>
-							<el-tooltip content="Vue后端启动" placement="top">
-								<el-button v-if="!scope.row.isVueStart" icon="el-icon-CaretRight" type="primary" @click="start(scope.row.id, 'vue')">VUE</el-button>
+
+							<!-- Vue后端启动/重启 -->
+							<el-tooltip content="Vue前端启动" placement="top" v-if="!scope.row.isVueStart">
+								<el-button icon="el-icon-CaretRight" type="primary" @click="start(scope.row.id, 'vue')">VUE</el-button>
 							</el-tooltip>
-							<el-tooltip content="Vue后端重启" placement="top">
-								<el-button v-if="scope.row.isVueStart" icon="el-icon-RefreshRight" type="warning" @click="restart(scope.row.id, 'vue')">VUE</el-button>
+							<el-tooltip content="Vue前端重启" placement="top" v-else>
+								<el-button icon="el-icon-RefreshRight" type="warning" @click="restart(scope.row.id, 'vue')">VUE</el-button>
 							</el-tooltip>
-							<el-tooltip content="Vue后端停止" placement="top">
-								<el-button v-if="scope.row.isVueStart" icon="el-icon-SwitchButton" type="danger" @click="stop(scope.row.id, 'vue')">VUE</el-button>
+
+							<!-- Vue后端停止 -->
+							<el-tooltip content="Vue前端停止" placement="top" v-if="scope.row.isVueStart">
+								<el-button icon="el-icon-SwitchButton" type="danger" @click="stop(scope.row.id, 'vue')">VUE</el-button>
 							</el-tooltip>
 						</el-button-group>
 					</template>
@@ -89,26 +96,56 @@
 				search: {
 					name: null
 				},
-				logs: []
+				logs: [],
+				websockets: {}
 			}
 		},
 		mounted() {
-			createWebSocket('ws://localhost:8080/ws/project-log', (message) => {
-				this.logs.push(message);
-			});
+
 		},
 		methods: {
+			//表格数据加载完毕后回调事件
+			onDataLoaded(data) {
+				console.log(data)
+				data.forEach(item => {
+					const projectId = item.id;
+					if (!this.websockets[projectId]) {
+						const ws = createWebSocket('ws://localhost:8080/ws/project-log/' + projectId, (message) => {
+							console.log(message);
+						});
+						this.websockets[projectId] = ws;
+					}
+				});
+			},
 			//启动项目
-			start(){
-
+			start(projectId, type){
+				this.$API.business.project.start.get({projectId: projectId, type: type}).then((res) => {
+					if(res.code === 200){
+						this.$message.success(res.message)
+					}else{
+						this.$message.error(res.message)
+					}
+				})
 			},
 			//重启项目
-			restart(){
-
+			restart(projectId, type){
+				this.$API.business.project.start.get({id: projectId, type: type}).then((res) => {
+					if(res.code === 200){
+						this.$message.success(res.message)
+					}else{
+						this.$message.error(res.message)
+					}
+				})
 			},
 			//停止项目
-			stop(){
-
+			stop(projectId, type){
+				this.$API.business.project.start.get({id: projectId, type: type}).then((res) => {
+					if(res.code === 200){
+						this.$message.success(res.message)
+					}else{
+						this.$message.error(res.message)
+					}
+				})
 			},
 			//添加
 			add(){
