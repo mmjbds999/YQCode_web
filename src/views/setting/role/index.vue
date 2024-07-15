@@ -19,6 +19,7 @@
 				<el-table-column label="#" type="index" width="50"></el-table-column>
 				<el-table-column label="角色名称" prop="name" width="150"></el-table-column>
 				<el-table-column label="别名" prop="aliasName" width="200"></el-table-column>
+				<el-table-column label="数据权限" prop="dataRoleStr" width="200"></el-table-column>
 				<el-table-column label="状态" prop="status" width="80">
 					<template #default="scope">
 						<div v-if="scope.row.aliasName === 'su'">

@@ -35,7 +35,7 @@ axios.interceptors.response.use(
 	(response) => {
 		const responseData = response.data;
 
-		if(responseData.code === 200){
+		if(!responseData.code || responseData.code === 200 || response.config.url.endsWith('/actuator/health')){
 			return response;
 		}
 
@@ -75,6 +75,11 @@ axios.interceptors.response.use(
 		return response;
 	},
 	(error) => {
+		// 如果响应是健康检查请求，则直接返回错误
+		if (error.config.url.endsWith('/actuator/health')) {
+			return Promise.reject(error);
+		}
+
 		if (error.response) {
 			ElNotification.error({
 				title: '请求错误',
