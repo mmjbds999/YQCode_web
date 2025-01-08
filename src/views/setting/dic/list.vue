@@ -38,7 +38,7 @@
 					type: {},
 					name: "",
 					code: "",
-					status: "0"
+					status: "0",
 				},
 				rules: {
 					dic: [

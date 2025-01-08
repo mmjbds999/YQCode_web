@@ -10,30 +10,32 @@ import sysConfig from "@/config";
 
 const tool = {}
 
+let port= window.location.port;
+
 /* localStorage */
 tool.data = {
 	set(key, data, datetime = 0) {
 		//加密
-		if(sysConfig.LS_ENCRYPTION == "AES"){
+		if(sysConfig.LS_ENCRYPTION === "AES"){
 			data = tool.crypto.AES.encrypt(JSON.stringify(data), sysConfig.LS_ENCRYPTION_key)
 		}
         let cacheValue = {
             content: data,
             datetime: parseInt(datetime) === 0 ? 0 : new Date().getTime() + parseInt(datetime) * 1000
         }
-        return localStorage.setItem(key, JSON.stringify(cacheValue))
+        return localStorage.setItem(key+port, JSON.stringify(cacheValue))
 	},
 	get(key) {
         try {
-            const value = JSON.parse(localStorage.getItem(key))
+            const value = JSON.parse(localStorage.getItem(key+port))
             if (value) {
                 let nowTime = new Date().getTime()
-                if (nowTime > value.datetime && value.datetime != 0) {
-                    localStorage.removeItem(key)
+                if (nowTime > value.datetime && value.datetime !== 0) {
+                    localStorage.removeItem(key+port)
                     return null;
                 }
 				//解密
-				if(sysConfig.LS_ENCRYPTION == "AES"){
+				if(sysConfig.LS_ENCRYPTION === "AES"){
 					value.content = JSON.parse(tool.crypto.AES.decrypt(value.content, sysConfig.LS_ENCRYPTION_key))
 				}
                 return value.content
@@ -44,7 +46,7 @@ tool.data = {
         }
 	},
 	remove(key) {
-		return localStorage.removeItem(key)
+		return localStorage.removeItem(key+port)
 	},
 	clear() {
 		return localStorage.clear()
@@ -54,11 +56,11 @@ tool.data = {
 /*sessionStorage*/
 tool.session = {
 	set(table, settings) {
-		var _set = JSON.stringify(settings)
-		return sessionStorage.setItem(table, _set);
+		const _set = JSON.stringify(settings);
+		return sessionStorage.setItem(table+port, _set);
 	},
 	get(table) {
-		var data = sessionStorage.getItem(table);
+		let data = sessionStorage.getItem(table + port);
 		try {
 			data = JSON.parse(data)
 		} catch (err) {
@@ -67,7 +69,7 @@ tool.session = {
 		return data;
 	},
 	remove(table) {
-		return sessionStorage.removeItem(table);
+		return sessionStorage.removeItem(table+port);
 	},
 	clear() {
 		return sessionStorage.clear();
@@ -77,17 +79,17 @@ tool.session = {
 /*cookie*/
 tool.cookie = {
 	set(name, value, config={}) {
-		var cfg = {
+		const cfg = {
 			expires: null,
 			path: null,
 			domain: null,
 			secure: false,
 			httpOnly: false,
 			...config
-		}
-		var cookieStr = `${name}=${escape(value)}`
+		};
+		let cookieStr = `${name}${port}=${escape(value)}`;
 		if(cfg.expires){
-			var exp = new Date()
+			const exp = new Date();
 			exp.setTime(exp.getTime() + parseInt(cfg.expires) * 1000)
 			cookieStr += `;expires=${exp.toGMTString()}`
 		}
@@ -100,7 +102,7 @@ tool.cookie = {
 		document.cookie = cookieStr
 	},
 	get(name){
-		var arr = document.cookie.match(new RegExp("(^| )"+name+"=([^;]*)(;|$)"))
+		const arr = document.cookie.match(new RegExp("(^| )" + name + port + "=([^;]*)(;|$)"));
 		if(arr != null){
 			return unescape(arr[2])
 		}else{
@@ -110,13 +112,13 @@ tool.cookie = {
 	remove(name){
 		var exp = new Date()
 		exp.setTime(exp.getTime() - 1)
-		document.cookie = `${name}=;expires=${exp.toGMTString()}`
+		document.cookie = `${name}${port}=;expires=${exp.toGMTString()}`
 	}
 }
 
 /* Fullscreen */
 tool.screen = function (element) {
-	var isFull = !!(document.webkitIsFullScreen || document.mozFullScreen || document.msFullscreenElement || document.fullscreenElement);
+	const isFull = !!(document.webkitIsFullScreen || document.mozFullScreen || document.msFullscreenElement || document.fullscreenElement);
 	if(isFull){
 		if(document.exitFullscreen) {
 			document.exitFullscreen();
@@ -148,21 +150,21 @@ tool.objCopy = function (obj) {
 /* 日期格式化 */
 tool.dateFormat = function (date, fmt='yyyy-MM-dd hh:mm:ss') {
 	date = new Date(date)
-	var o = {
-		"M+" : date.getMonth()+1,                 //月份
-		"d+" : date.getDate(),                    //日
-		"h+" : date.getHours(),                   //小时
-		"m+" : date.getMinutes(),                 //分
-		"s+" : date.getSeconds(),                 //秒
-		"q+" : Math.floor((date.getMonth()+3)/3), //季度
-		"S"  : date.getMilliseconds()             //毫秒
+	const o = {
+		"M+": date.getMonth() + 1,                 //月份
+		"d+": date.getDate(),                    //日
+		"h+": date.getHours(),                   //小时
+		"m+": date.getMinutes(),                 //分
+		"s+": date.getSeconds(),                 //秒
+		"q+": Math.floor((date.getMonth() + 3) / 3), //季度
+		"S": date.getMilliseconds()             //毫秒
 	};
 	if(/(y+)/.test(fmt)) {
 		fmt=fmt.replace(RegExp.$1, (date.getFullYear()+"").substr(4 - RegExp.$1.length));
 	}
 	for(var k in o) {
 		if(new RegExp("("+ k +")").test(fmt)){
-			fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
+			fmt = fmt.replace(RegExp.$1, (RegExp.$1.length===1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
 		}
 	}
 	return fmt;
@@ -197,7 +199,7 @@ tool.crypto = {
 	//AES加解密
 	AES: {
 		encrypt(data, secretKey, config={}){
-			if(secretKey.length % 8 != 0){
+			if(secretKey.length % 8 !== 0){
 				console.warn("[SCUI error]: 秘钥长度需为8的倍数，否则解密将会失败。")
 			}
 			const result = CryptoJS.AES.encrypt(data, CryptoJS.enc.Utf8.parse(secretKey), {

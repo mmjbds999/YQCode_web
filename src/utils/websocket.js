@@ -2,7 +2,7 @@ export function createWebSocket(url, onMessageCallback) {
 	const socket = new WebSocket(url);
 
 	socket.onopen = function () {
-		console.log("WebSocket connection established");
+		console.log("WebSocket "+url+" 连接成功！");
 	};
 
 	socket.onmessage = function (event) {
@@ -10,11 +10,11 @@ export function createWebSocket(url, onMessageCallback) {
 	};
 
 	socket.onclose = function () {
-		console.log("WebSocket connection closed");
+		console.log("WebSocket "+url+" 连接关闭");
 	};
 
 	socket.onerror = function (error) {
-		console.error("WebSocket error: ", error);
+		console.error("WebSocket "+url+" 错误: ", error);
 	};
 
 	return socket;

@@ -13,22 +13,26 @@
 			</div>
 		</el-header>
 		<el-main class="nopadding">
-			<scTable ref="table" :apiObj="apiObj" row-key="id" @selection-change="selectionChange" @data-loaded="onDataLoaded" stripe highlightCurrentRow>
+			<scTable ref="table" :apiObj="apiObj" row-key="id" @selection-change="selectionChange" @dataChange="onDataLoaded" stripe highlightCurrentRow>
 				<el-table-column type="selection" width="50"></el-table-column>
 				<el-table-column label="项目名称" prop="name" width="250"></el-table-column>
 				<el-table-column label="英文名" prop="enName" width="150"></el-table-column>
-				<el-table-column label="java端口/启动状态" prop="javaPort" width="150">
+				<el-table-column label="java端口/启动状态" prop="javaPort" width="250">
 					<template #default="scope">
 						<el-tag>{{scope.row.javaPort}}</el-tag>
+						<el-tag style="cursor: pointer;" type="warning" @click="openLog(scope.row.javaPort)">log</el-tag>
 						<el-tag v-if="scope.row.isJavaStart" type="success">已启动</el-tag>
 						<el-tag v-else type="danger">未启动</el-tag>
+						<el-tag style="cursor: pointer;" v-if="scope.row.isJavaStart" @click="openProject(scope.row.javaPort, 'java')" target="_blank">open</el-tag>
 					</template>
 				</el-table-column>
-				<el-table-column label="vue端口/启动状态" prop="vuePort" width="150">
+				<el-table-column label="vue端口/启动状态" prop="vuePort" width="250">
 					<template #default="scope">
 						<el-tag>{{scope.row.vuePort}}</el-tag>
+						<el-tag style="cursor: pointer;" type="warning" @click="openLog(scope.row.vuePort)">log</el-tag>
 						<el-tag v-if="scope.row.isVueStart" type="success">已启动</el-tag>
 						<el-tag v-else type="danger">未启动</el-tag>
+						<el-tag style="cursor: pointer;" v-if="scope.row.isJavaStart" @click="openProject(scope.row.vuePort, 'vue')" target="_blank">open</el-tag>
 					</template>
 				</el-table-column>
 				<el-table-column label="创建人" prop="createBy.name" width="180"></el-table-column>
@@ -42,38 +46,43 @@
 						<el-button-group>
 							<!-- Java后端启动/重启 -->
 							<el-tooltip content="Java后端启动" placement="top" v-if="!scope.row.isJavaStart">
-								<el-button icon="el-icon-CaretRight" type="primary" @click="start(scope.row.id, 'java')">JAVA</el-button>
+								<el-button icon="el-icon-CaretRight" type="primary" @click="start(scope.row.id, 'java', scope.row.javaPort)">JAVA</el-button>
 							</el-tooltip>
 							<el-tooltip content="Java后端重启" placement="top" v-else>
-								<el-button icon="el-icon-RefreshRight" type="warning" @click="restart(scope.row.id, 'java')">JAVA</el-button>
+								<el-button icon="el-icon-RefreshRight" type="warning" @click="restart(scope.row.id, 'java', scope.row.javaPort)">JAVA</el-button>
 							</el-tooltip>
 
 							<!-- Java后端停止 -->
 							<el-tooltip content="Java后端停止" placement="top" v-if="scope.row.isJavaStart">
-								<el-button icon="el-icon-SwitchButton" type="danger" @click="stop(scope.row.id, 'java')">JAVA</el-button>
+								<el-button icon="el-icon-SwitchButton" type="danger" @click="stop(scope.row.id, 'java', scope.row.javaPort)">JAVA</el-button>
 							</el-tooltip>
 
 							<!-- Vue后端启动/重启 -->
 							<el-tooltip content="Vue前端启动" placement="top" v-if="!scope.row.isVueStart">
-								<el-button icon="el-icon-CaretRight" type="primary" @click="start(scope.row.id, 'vue')">VUE</el-button>
+								<el-button icon="el-icon-CaretRight" type="primary" @click="start(scope.row.id, 'vue', scope.row.vuePort)">VUE</el-button>
 							</el-tooltip>
 							<el-tooltip content="Vue前端重启" placement="top" v-else>
-								<el-button icon="el-icon-RefreshRight" type="warning" @click="restart(scope.row.id, 'vue')">VUE</el-button>
+								<el-button icon="el-icon-RefreshRight" type="warning" @click="restart(scope.row.id, 'vue', scope.row.vuePort)">VUE</el-button>
 							</el-tooltip>
 
 							<!-- Vue后端停止 -->
 							<el-tooltip content="Vue前端停止" placement="top" v-if="scope.row.isVueStart">
-								<el-button icon="el-icon-SwitchButton" type="danger" @click="stop(scope.row.id, 'vue')">VUE</el-button>
+								<el-button icon="el-icon-SwitchButton" type="danger" @click="stop(scope.row.id, 'vue', scope.row.vuePort)">VUE</el-button>
 							</el-tooltip>
 						</el-button-group>
 					</template>
 				</el-table-column>
-
 			</scTable>
 		</el-main>
 	</el-container>
 
 	<save-dialog v-if="dialog.save" ref="saveDialog" @success="handleSaveSuccess" @closed="dialog.save=false"></save-dialog>
+
+	<el-drawer v-model="drawer" title="日志" :direction="direction" class="custom-drawer">
+		<div class="log-container" ref="logContainer">
+			<div v-for="(log, index) in currentLogs" :key="index" class="log-item">{{ log }}</div>
+		</div>
+	</el-drawer>
 
 </template>
 
@@ -96,52 +105,122 @@
 				search: {
 					name: null
 				},
-				logs: [],
-				websockets: {}
+				logs: this.$TOOL.data.get("projectLogs") || {},
+				websockets: {},
+				drawer: false,
+				direction: 'btt',
+				currentPort: null,
+				vueStartBtnStatus: false,
 			}
 		},
 		mounted() {
 
 		},
+		computed: {
+			currentLogs() {
+				return this.logs[this.currentPort] || [];
+			}
+		},
 		methods: {
+			openProject(port, type) {
+				let url = window.location.origin.substring(0, window.location.origin.lastIndexOf(':')) + ':' + port;
+				if(type === 'java'){
+					url += '/doc'
+				}else{
+					url += '/#/login'
+				}
+				window.open(url);
+			},
 			//表格数据加载完毕后回调事件
 			onDataLoaded(data) {
-				console.log(data)
-				data.forEach(item => {
-					const projectId = item.id;
-					if (!this.websockets[projectId]) {
-						const ws = createWebSocket('ws://localhost:8080/ws/project-log/' + projectId, (message) => {
-							console.log(message);
-						});
-						this.websockets[projectId] = ws;
+				if(data && data.data && Array.isArray(data.data.rows)){
+					data.data.rows.forEach(item => {
+						const javaPort = item.javaPort;
+						const vuePort = item.vuePort;
+						if (!this.websockets[javaPort]) {
+							// java
+							const javaWs = createWebSocket('ws://localhost:10801/ws/project-log/' + javaPort, (message) => {
+								if (this.logs[javaPort]) {
+									this.logs[javaPort].push(message);
+								} else {
+									this.logs[javaPort] = [message];
+								}
+								this.scrollToBottom();
+								this.$TOOL.data.set("projectLogs", this.logs)
+								if(message.includes('请求URL: ') || message === 'java success'){
+									this.$refs.table.refresh()
+								}
+							});
+							this.websockets[javaPort] = javaWs;
+						}
+						if (!this.websockets[vuePort]) {
+							// vue
+							const vueWs = createWebSocket('ws://localhost:10801/ws/project-log/' + vuePort, (message) => {
+								if (this.logs[vuePort]) {
+									this.logs[vuePort].push(message);
+								} else {
+									this.logs[vuePort] = [message];
+								}
+								this.scrollToBottom();
+								this.$TOOL.data.set("projectLogs", this.logs)
+								if(message === 'vue success' || message.includes('App running at:')){
+									this.$refs.table.refresh()
+								}
+							});
+							this.websockets[vuePort] = vueWs;
+						}
+					});
+				}
+			},
+			// 滚动到底部方法
+			scrollToBottom() {
+				this.$nextTick(() => {
+					if(this.drawer){
+						const container = this.$refs.logContainer;
+						container.scrollTop = container.scrollHeight;
 					}
 				});
 			},
+			//打开日志窗口
+			openLog(port){
+				this.drawer = true
+				this.currentPort = port;
+				this.scrollToBottom();
+			},
 			//启动项目
-			start(projectId, type){
+			start(projectId, type, port){
+				this.logs[port] = []
+				this.$TOOL.data.set("projectLogs", this.logs)
 				this.$API.business.project.start.get({projectId: projectId, type: type}).then((res) => {
 					if(res.code === 200){
 						this.$message.success(res.message)
+						this.openLog(port)
 					}else{
 						this.$message.error(res.message)
 					}
 				})
 			},
 			//重启项目
-			restart(projectId, type){
-				this.$API.business.project.start.get({id: projectId, type: type}).then((res) => {
+			restart(projectId, type, port){
+				this.logs[port] = []
+				this.$TOOL.data.set("projectLogs", this.logs)
+				this.$API.business.project.restart.get({projectId: projectId, type: type}).then((res) => {
 					if(res.code === 200){
 						this.$message.success(res.message)
+						this.openLog(port)
 					}else{
 						this.$message.error(res.message)
 					}
 				})
 			},
 			//停止项目
-			stop(projectId, type){
-				this.$API.business.project.start.get({id: projectId, type: type}).then((res) => {
+			stop(projectId, type, port){
+				this.logs[port] = []
+				this.$TOOL.data.set("projectLogs", this.logs)
+				this.$API.business.project.stop.get({projectId: projectId, type: type}).then((res) => {
 					if(res.code === 200){
 						this.$message.success(res.message)
+						this.openLog(port)
 					}else{
 						this.$message.error(res.message)
 					}
@@ -211,12 +290,8 @@
 				return target
 			},
 			//本地更新数据
-			handleSaveSuccess(data, mode){
-				if(mode==='add'){
-					this.$refs.table.refresh()
-				}else if(mode==='edit'){
-					this.$refs.table.refresh()
-				}
+			handleSaveSuccess(){
+				this.$refs.table.refresh()
 			},
 			formatDate(date) {
 				const d = new Date(date);
@@ -230,3 +305,22 @@
 		}
 	}
 </script>
+
+<style>
+	.custom-drawer {
+		background-color: rgba(0, 0, 0, 0.7);
+		color: rgba(9, 189, 39, 0.99);
+		height: 50vh !important; /* 设置高度为半屏 */
+		bottom: 0; /* 从底部开始 */
+	}
+
+	.log-container {
+		max-height: 100%;
+		overflow-y: auto;
+	}
+
+	.log-item {
+		margin-bottom: 5px;
+		white-space: pre-wrap;
+	}
+</style>

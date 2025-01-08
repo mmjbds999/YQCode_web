@@ -15,7 +15,7 @@ export default {
 		name: 'name'					//规定搜索字段
 	},
 	props: {
-		label: 'label',					//映射label显示字段
-		value: 'value',					//映射value值字段
+		label: 'name',					//映射label显示字段
+		value: 'code',					//映射value值字段
 	}
 }

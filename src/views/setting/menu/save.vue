@@ -4,7 +4,7 @@
 			<el-empty description="请选择左侧菜单后操作" :image-size="100"></el-empty>
 		</el-col>
 		<template v-else>
-			<el-col :lg="12">
+			<el-col :lg="24">
 				<h2>{{form.meta.title || "新增菜单"}}</h2>
 				<el-form :model="form" :rules="rules" ref="dialogForm" label-width="80px" label-position="left">
 					<el-form-item label="显示名称" prop="meta.title">
@@ -59,26 +59,52 @@
 <!--					<el-form-item label="标签" prop="tag">-->
 <!--						<el-input v-model="form.meta.tag" clearable placeholder=""></el-input>-->
 <!--					</el-form-item>-->
-					<el-form-item>
-						<el-button type="primary" @click="save" :loading="loading">保 存</el-button>
-					</el-form-item>
 				</el-form>
 
 			</el-col>
-			<el-col :lg="12" class="apilist">
+			<el-col :lg="24" class="pageContent">
 				<h2>菜单内容生成</h2>
-				<sc-form-table v-model="form.apiList" :addTemplate="apiListAddTemplate" placeholder="暂无匹配接口权限">
-					<el-table-column prop="code" label="标识" width="150">
-						<template #default="scope">
-							<el-input v-model="scope.row.code" placeholder="请输入内容"></el-input>
-						</template>
-					</el-table-column>
-					<el-table-column prop="url" label="Api url">
-						<template #default="scope">
-							<el-input v-model="scope.row.url" placeholder="请输入内容"></el-input>
-						</template>
-					</el-table-column>
-				</sc-form-table>
+				<el-form-item>
+					<el-select v-model="form.pageType" placeholder="请选择">
+						<el-option v-for="item in pageType" :key="item.value" :label="item.label" :value="item.value"></el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item>
+					<sc-form-table v-model="form.pageContent" :addTemplate="pageContentAddTemplate" placeholder="暂无字段数据">
+						<el-table-column prop="type" label="字段类型" width="150">
+							<template #default="scope">
+								<el-select v-model="scope.row.type" placeholder="请选择">
+									<el-option v-for="item in typeDic" :key="item.value" :label="item.label" :value="item.value"></el-option>
+								</el-select>
+							</template>
+						</el-table-column>
+						<el-table-column prop="name" label="字段名称">
+							<template #default="scope">
+								<el-input v-model="scope.row.name" placeholder="请输入内容"></el-input>
+							</template>
+						</el-table-column>
+						<el-table-column prop="name" label="长度">
+							<template #default="scope">
+								<el-input v-model="scope.row.name" placeholder="请输入长度"></el-input>
+							</template>
+						</el-table-column>
+						<el-table-column prop="type" label="验证方式">
+							<template #default="scope">
+								<el-select v-model="scope.row.type" placeholder="请选择">
+									<el-option v-for="item in typeDic" :key="item.value" :label="item.label" :value="item.value"></el-option>
+								</el-select>
+							</template>
+						</el-table-column>
+						<el-table-column prop="name" label="提示词">
+							<template #default="scope">
+								<el-input v-model="scope.row.name" placeholder="提示词"></el-input>
+							</template>
+						</el-table-column>
+					</sc-form-table>
+				</el-form-item>
+				<el-form-item>
+					<el-button type="primary" @click="save" :loading="loading">保 存</el-button>
+				</el-form-item>
 			</el-col>
 		</template>
 	</el-row>
@@ -114,7 +140,8 @@
 						fullpage: false,
 						tag: "",
 					},
-					apiList: []
+					pageType: "curd",
+					pageContent: [],
 				},
 				menuOptions: [],
 				menuProps: {
@@ -132,11 +159,23 @@
 					'#c71585'
 				],
 				rules: [],
-				apiListAddTemplate: {
-					code: "",
-					url: ""
+				// 表单内容添加模板
+				pageContentAddTemplate: {
+					name: "",
+					type: "",
+					length: "",
+					validate: "",
+					tips: ""
 				},
-				loading: false
+				loading: false,
+				pageType: [
+					{label: "CURD表格", value: "curd"},
+					{label: "单页保存", value: "onePage"}
+				],
+				colType: [
+					{label: "文本框", value: "0"},
+					{label: "局部", value: "1"}
+				],
 			}
 		},
 		watch: {
@@ -155,7 +194,7 @@
 			treeToMap(tree){
 				const map = []
 				tree.forEach(item => {
-					var obj = {
+					let obj = {
 						id: item.id,
 						parentId: item.parentId,
 						title: item.meta.title,
@@ -179,8 +218,12 @@
 			//表单注入数据
 			setData(data, pid){
 				this.form = data
-				this.form.apiList = data.apiList || []
+				this.form.pageContent = data.pageContent || []
 				this.form.parentId = pid
+				console.log(data.pageType)
+				if(!data.pageType || data.pageType === 'undefined'){
+					this.form.pageType = "curd"
+				}
 			}
 		}
 	}
@@ -188,8 +231,8 @@
 
 <style scoped>
 	h2 {font-size: 17px;color: #3c4a54;padding:0 0 30px 0;}
-	.apilist {border-left: 1px solid #eee;}
+	.pageContent {border-left: 1px solid #eee;}
 
 	[data-theme="dark"] h2 {color: #fff;}
-	[data-theme="dark"] .apilist {border-color: #434343;}
+	[data-theme="dark"] .pageContent {border-color: #434343;}
 </style>

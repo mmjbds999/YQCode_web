@@ -10,6 +10,7 @@
 					<el-header>
 						<div class="left-panel">
 							<el-date-picker v-model="date" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :default-time="defaultTime"></el-date-picker>
+							<div style="color: #bbbb06; margin-left: 10px">默认显示最近7天的日志，需要查看更多，请根据时间区间查询</div>
 						</div>
 						<div class="right-panel">
 

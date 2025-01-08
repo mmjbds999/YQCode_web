@@ -135,6 +135,13 @@ export default {
 			get: async function(params){
 				return await http.get(this.url, params)
 			}
+		},
+		getDicChild: {
+			url: `${config.API_URL}/dic/getDicChild`,
+			name: "根据字典类型获取字典数据",
+			get: async function(params){
+				return await http.get(this.url, params)
+			}
 		}
 	},
 	role: {
@@ -344,29 +351,134 @@ export default {
 			}
 		}
 	},
-	table: {
+	modType: {
 		list: {
-			url: `${config.API_URL}/system/table/list`,
-			name: "表格列管理列表",
+			url: `${config.API_URL}/modType/list`,
+			name: "模块类型列表",
 			get: async function(params){
 				return await http.get(this.url, params);
 			}
 		},
-		info: {
-			url: `${config.API_URL}/system/table/info`,
-			name: "表格列管理详情",
+		tree: {
+			url: `${config.API_URL}/modType/tree`,
+			name: "模块类型树",
 			get: async function(params){
 				return await http.get(this.url, params);
+			}
+		},
+		get: {
+			url: `${config.API_URL}/modType/get`,
+			name: "根据id获取模块类型",
+			get: async function(params){
+				return await http.get(this.url, params);
+			}
+		},
+		save: {
+			url: `${config.API_URL}/modType/save`,
+			name: "保存模块类型",
+			post: async function(data){
+				return await http.post(this.url, data);
+			}
+		},
+		del: {
+			url: `${config.API_URL}/modType/del`,
+			name: "删除模块类型",
+			delete: async function(params){
+				return await http.delete(this.url, params);
+			}
+		},
+		delBatch: {
+			url: `${config.API_URL}/modType/delBatch`,
+			name: "批量删除模块类型",
+			delete: async function(params){
+				return await http.delete(this.url, params, {
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				});
 			}
 		}
 	},
-	tasks: {
+	mod: {
 		list: {
-			url: `${config.API_URL}/system/tasks/list`,
-			name: "系统任务管理",
+			url: `${config.API_URL}/mods/list`,
+			name: "模块列表",
 			get: async function(params){
 				return await http.get(this.url, params);
 			}
+		},
+		get: {
+			url: `${config.API_URL}/mods/get`,
+			name: "根据id获取模块",
+			get: async function(params){
+				return await http.get(this.url, params);
+			}
+		},
+		save: {
+			url: `${config.API_URL}/mods/save`,
+			name: "保存模块",
+			post: async function(data){
+				return await http.post(this.url, data);
+			}
+		},
+		del: {
+			url: `${config.API_URL}/mods/del`,
+			name: "删除模块",
+			delete: async function(params){
+				return await http.delete(this.url, params);
+			}
+		},
+		delBatch: {
+			url: `${config.API_URL}/mods/delBatch`,
+			name: "批量删除模块",
+			delete: async function(params){
+				return await http.delete(this.url, params, {
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				});
+			}
 		}
-	}
+	},
+	pagesAPI: {
+		list: {
+			url: `${config.API_URL}/pages/list`,
+			name: "页面管理列表",
+			get: async function(params){
+				return await http.get(this.url, params);
+			}
+		},
+		get: {
+			url: `${config.API_URL}/pages/get`,
+			name: "根据id获取页面",
+			get: async function(params){
+				return await http.get(this.url, params);
+			}
+		},
+		save: {
+			url: `${config.API_URL}/pages/save`,
+			name: "保存页面",
+			post: async function(data){
+				return await http.post(this.url, data);
+			}
+		},
+		del: {
+			url: `${config.API_URL}/pages/del`,
+			name: "删除页面",
+			delete: async function(params){
+				return await http.delete(this.url, params);
+			}
+		},
+		delBatch: {
+			url: `${config.API_URL}/pages/delBatch`,
+			name: "批量删除页面",
+			delete: async function(params){
+				return await http.delete(this.url, params, {
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				});
+			}
+		},
+	},
 }

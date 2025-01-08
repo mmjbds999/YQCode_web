@@ -8,7 +8,7 @@
 				<el-input clearable v-model="form.enName" placeholder="请输入英文名"></el-input>
 			</el-form-item>
 			<el-form-item label="LOGO">
-				<sc-upload v-model="form.logo" icon="el-icon-picture" title="上传logo" :cropper="true" :compress="1" :aspectRatio="1/1"></sc-upload>
+				<sc-upload v-model="form.logo" icon="el-icon-picture" title="上传logo"></sc-upload>
 			</el-form-item>
 			<el-form-item label="项目简介" prop="description">
 				<el-input type="textarea" :rows="4" v-model="form.description" clearable placeholder="请输入项目简介"></el-input>
@@ -68,18 +68,15 @@
 						this.$API.business.project.save.post(this.form).then(res => {
 							if(res.code === 200){
 								this.submitLoading = false
+								this.visible = false;
 								this.$message.success('创建成功')
-								// this.$router.push('/project/list')
+								this.$emit('success')
 							}
 						})
 					}else{
 						return false
 					}
 				})
-			},
-			//表单注入数据
-			setData(data){
-				Object.assign(this.form, data)
 			}
 		}
 	}

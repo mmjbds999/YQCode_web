@@ -59,6 +59,7 @@
 				this.dicParams[config.request.name] = this.dic
 				var res = {}
 				if(this.apiObj){
+					console.log(this.props.label)
 					res = await this.apiObj.get(this.params)
 				}else if(this.dic){
 					res = await config.dicApiObj.get(this.params)
