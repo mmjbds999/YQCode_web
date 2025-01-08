@@ -133,6 +133,13 @@
 					this.$refs.saveDialog.open()
 				})
 			},
+			//查看
+			table_show(row){
+				this.dialog.save = true
+				this.$nextTick(() => {
+					this.$refs.saveDialog.open('show').setData(row)
+				})
+			},
 			//编辑
 			table_edit(row){
 				this.dialog.save = true
